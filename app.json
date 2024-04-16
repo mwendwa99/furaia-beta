@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "furaia-beta",
+    "slug": "furaia-beta",
+    "privacy": "public",
+    "description": "Furaia Beta App",
+    "version": "1.0.0",
+    "icon": "./assets/FURAIA.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#002a0c"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mwendwa99.furaiabeta"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/FURAIA.png",
+        "backgroundColor": "#002a0c"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.mwendwa99.furaiabeta"
+    },
+    "web": {
+      "favicon": "./assets/FURAIA.png"
+    },
+    "plugins": [
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Furaia to access your camera."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0a23de18-5c67-491d-b435-e68c238dd315"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0a23de18-5c67-491d-b435-e68c238dd315"
+    }
+  }
+}

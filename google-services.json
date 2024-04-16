@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "471105008766",
+    "project_id": "furaia-beta",
+    "storage_bucket": "furaia-beta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471105008766:android:592c33f4bbd429dfac542f",
+        "android_client_info": {
+          "package_name": "com.furaia.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtpyoasBDPizyzrnBWm89Nh5MjXBzzbNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
