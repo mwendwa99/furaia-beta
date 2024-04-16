@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, View } from "react-native";
 
 import { ListItem } from "../../components";
 
@@ -35,7 +34,7 @@ const Explore = ({ navigation }) => {
       handlePressLink={() => navigation.navigate(link.url)}
     />
   ));
-  return <SafeAreaView style={styles.container}>{listItems}</SafeAreaView>;
+  return <View style={styles.container}>{listItems}</View>;
 };
 
 export default Explore;
@@ -43,7 +42,6 @@ export default Explore;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fafafa",
-    padding: 10,
+    marginHorizontal: 10,
   },
 });

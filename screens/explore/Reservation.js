@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Calendar, DropdownIOS, Text, Input } from "../../components";
+import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
 import { formatOrderDate } from "../../utils/helper";
 import { Button } from "react-native-paper";
 
@@ -44,6 +44,7 @@ const Reservation = ({ navigation }) => {
       is_accepted: accepted,
     };
     console.log(data);
+    alert("Reservation made successfully!");
     // setAccepted(true);
   };
 
@@ -51,10 +52,19 @@ const Reservation = ({ navigation }) => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.column}>
+          <ListItem
+            title="View your reservations"
+            iconLeft="calendar"
+            iconRight="chevron-right"
+            handlePressLink={() => navigation.navigate("My Reservations")}
+          />
+        </View>
+        <View style={styles.column}>
           <Text
             value="I would like to make a reservation for:"
             variant="important"
             color="#002a0c"
+            textStyle={{ marginBottom: 10 }}
           />
           <DropdownIOS
             items={premises}
@@ -95,7 +105,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    margin: 10,
+    marginHorizontal: 10,
   },
   column: {
     display: "flex",

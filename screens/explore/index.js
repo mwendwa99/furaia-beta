@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Explore from "./Explore";
 import Reservation from "./Reservation";
+import MyReservations from "./MyReservations";
 import StoryYangu from "./StoryYangu";
 import SwapPoints from "./SwapPoints";
 
@@ -25,6 +26,14 @@ export const ExploreNavigator = () => {
           title: "Reservation",
         }}
         component={Reservation}
+      />
+      <ExploreStack.Screen
+        name="My Reservations"
+        options={{
+          headerShadowVisible: false,
+          title: "My Reservations",
+        }}
+        component={MyReservations}
       />
       <ExploreStack.Screen
         name="SwapPoints"
