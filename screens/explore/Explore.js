@@ -31,7 +31,13 @@ const Explore = ({ navigation }) => {
       title={link.title}
       iconLeft={link.iconLeft}
       iconRight={link.iconRight}
-      handlePressLink={() => navigation.navigate(link.url)}
+      handlePressLink={
+        link.url === "Reservation"
+          ? () => navigation.navigate("Reservation")
+          : link.url === "SwapPoints"
+          ? () => alert("Coming soon!")
+          : () => alert("Coming soon!")
+      }
     />
   ));
   return <View style={styles.container}>{listItems}</View>;
