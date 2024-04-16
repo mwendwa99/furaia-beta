@@ -102,7 +102,8 @@ const Home = ({ navigation }) => {
             height: Platform.OS === "ios" ? 70 : "",
           }}
         >
-          <View
+          <Pressable
+            onPress={() => alert("Coming Soon!")}
             style={{
               width: 40,
               height: 40,
@@ -115,9 +116,10 @@ const Home = ({ navigation }) => {
             }}
           >
             <Ionicons name="share-social" color="#002a0c" size={20} />
-          </View>
+          </Pressable>
 
-          <View
+          <Pressable
+            onPress={() => alert("Coming Soon!")}
             style={{
               width: 40,
               height: 40,
@@ -130,7 +132,7 @@ const Home = ({ navigation }) => {
             }}
           >
             <Ionicons name="trending-up-sharp" color="#002a0c" size={20} />
-          </View>
+          </Pressable>
         </View>
 
         <View
@@ -140,10 +142,13 @@ const Home = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <View style={styles.Redeem}>
+          <Pressable
+            style={styles.Redeem}
+            onPress={() => alert("Coming Soon!")}
+          >
             <FontAwesome5 name="funnel-dollar" color="#002a0c" size={20} />
             <RNText style={styles.RedeemText}>Redeem Points</RNText>
-          </View>
+          </Pressable>
           <Pressable onPress={() => navigation.navigate("All Bills")}>
             <View style={styles.orderHistory}>
               <Fontisto name="history" color="#002a0c" size={20} />
