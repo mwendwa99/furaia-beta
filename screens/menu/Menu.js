@@ -4,15 +4,16 @@ import {
   Text as RNText,
   useWindowDimensions,
   StyleSheet,
-  SafeAreaView,
   FlatList,
   Pressable,
   View,
+  Platform,
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { warning } from "../../utils/toast";
 import { StatusBar } from "expo-status-bar";
 import { useSelector } from "react-redux";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MenuListItem, Text, Searchbar } from "../../components";
 // import { ShoppingCartContext } from "../../context/cartContext";
@@ -321,29 +322,25 @@ function MenuScreen({ navigation }) {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const { menu } = useSelector((state) => state.menu);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categories = Object.keys(menu?.data).filter(
     (category) => menu?.data[category].length > 0
   );
 
-  const categoryList = [
-    { title: "one" },
-    { title: "two" },
-    { title: "three" },
-    { title: "four" },
-    { title: "five" },
-    { title: "six" },
-    { title: "seven" },
-    { title: "eight" },
-    { title: "nine" },
-    { title: "ten" },
-  ];
-  // console.log("categories", categories);
-  // console.log("categoryList", categoryList);
-
   const handleCheckout = () => {
     navigation.navigate("Checkout");
   };
+
+  // Filter menu items based on search query
+  const filteredMenu = Object.fromEntries(
+    categories.map((category) => [
+      category,
+      menu?.data[category].filter((item) =>
+        item?.item_name.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    ])
+  );
 
   // Render flatlist for each category
   const renderScene = SceneMap(
@@ -353,7 +350,8 @@ function MenuScreen({ navigation }) {
         () => (
           <FlatList
             // data={menuData.data[category]}
-            data={menu.data[category]}
+            // data={menu.data[category]}
+            data={filteredMenu[category]}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <MenuListItem item={item} />}
           />
@@ -373,10 +371,13 @@ function MenuScreen({ navigation }) {
           style={{
             borderWidth: 2,
             borderColor: "#c3c3c3",
+            alignContent: "center",
+            justifyContent: "center",
+            alignItems: "center",
             borderRadius: 10,
-            paddingHorizontal: 30,
+            paddingHorizontal: 10,
             paddingVertical: 10,
-            width: "100%",
+            width: 100,
             backgroundColor: focused ? "#002a0c" : "#fafafa",
           }}
         >
@@ -389,8 +390,8 @@ function MenuScreen({ navigation }) {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fafafa" }}>
-      <Searchbar />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fafafa" }}>
+      <Searchbar setSearchQuery={setSearchQuery} />
       <TabView
         navigationState={{
           index,
@@ -407,8 +408,8 @@ function MenuScreen({ navigation }) {
       <Pressable style={styles.cartButton} onPress={handleCheckout}>
         <Text value={`Checkout`} variant={"important"} />
       </Pressable>
-      <StatusBar style="dark" />
-    </View>
+      <StatusBar style="dark" translucent={true} animated={true} />
+    </SafeAreaView>
   );
 }
 

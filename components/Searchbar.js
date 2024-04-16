@@ -16,9 +16,10 @@
 // export default MyComponent;
 
 import { SearchBar } from "react-native-elements";
+import { Platform } from "react-native";
 import { useState } from "react";
 
-export default function MyComponent() {
+export default function Search({ setSearchQuery }) {
   updateSearch = (search) => {
     setSearch({ search });
   };
@@ -26,11 +27,24 @@ export default function MyComponent() {
 
   return (
     <SearchBar
+      round
+      platform={
+        Platform.OS === "ios"
+          ? "ios"
+          : Platform.OS === "android"
+          ? "android"
+          : "default"
+      }
       placeholder="Search Here..."
       onChangeText={updateSearch}
+      // showLoading
+
       value={search}
-      containerStyle={{ backgroundColor: "#002a0c" }}
-      inputContainerStyle={{ backgroundColor: "#f3f3f3" }}
+      containerStyle={{ backgroundColor: "#fff" }}
+      searchIcon={
+        Platform.OS === "ios" ? { size: 24, color: "black" } : { size: 24 }
+      }
+      // inputContainerStyle={{ backgroundColor: "#f3f3f3" }}
     />
   );
 }
