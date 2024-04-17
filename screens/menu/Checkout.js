@@ -12,29 +12,9 @@ import { useCart } from "../../context/cart";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { createOrder } from "../../redux/order/orderActions";
-import { danger, success } from "../../utils/toast";
 
 const orderComplete = require("../../assets/animations/complete.json");
 const cart = require("../../assets/animations/cart.json");
-
-const dropDownItems = [
-  {
-    label: "M-PESA",
-    value: "1",
-  },
-  {
-    label: "Visa",
-    value: "2",
-  },
-  {
-    label: "PDQ",
-    value: "3",
-  },
-  {
-    label: "Cash",
-    value: "4",
-  },
-];
 
 export default function Checkout({ navigation }) {
   const dispatch = useDispatch();
@@ -61,11 +41,19 @@ export default function Checkout({ navigation }) {
   useEffect(() => {
     if (orderSuccess) {
       setShowAnimation(true);
-      setTimeout(() => {
-        navigation.navigate("All Bills");
-      }, 3000); // Adjust the duration as needed
     }
   }, [orderSuccess]);
+
+  useEffect(() => {
+    if (showAnimation) {
+      const animationTimeout = setTimeout(() => {
+        setShowAnimation(false);
+        navigation.navigate("All Bills");
+      }, 3000); // Adjust the duration as needed
+
+      return () => clearTimeout(animationTimeout);
+    }
+  }, [showAnimation, navigation]);
 
   useEffect(() => {
     if (cartItems.length === 0 && !cartCleared) {
@@ -104,111 +92,126 @@ export default function Checkout({ navigation }) {
 
     const res = JSON.stringify(orderData);
 
-    console.log(res);
+    // console.log(res);
 
-    // dispatch(createOrder({ data: orderData, token }));
+    dispatch(createOrder({ data: orderData, token }));
   };
 
   // console.log(order);
 
   return (
     <ScrollView style={styles.container}>
-      {showAnimation && (
+      {showAnimation ? (
+        <View
+          style={{
+            flex: 1,
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Animation animation={orderComplete} message="Order Complete" />
+        </View>
+      ) : (
         <View style={{ flex: 1 }}>
-          <Animation animation={orderComplete} message="Order confirmed!" />
+          {cartItems.length > 0 ? (
+            <View>
+              <View style={styles.input}>
+                <Text
+                  value="Your Order"
+                  variant={"subheading"}
+                  color={"#002a0c"}
+                />
+                <View>
+                  {cartItems.length > 0 ? (
+                    cartItems.map((item) => (
+                      <ListItem
+                        key={item.item_id}
+                        title={`${item.item_quantity}x ${item.item_name} @ ${item.item_price}`}
+                        description={`notes: ${item.item_comments}`}
+                        iconLeft={"minus"}
+                        iconRight={"plus"}
+                        handlePressRightIcon={() => addToCart(item)}
+                        handlePressLeftIcon={() => removeFromCart(item.item_id)}
+                      />
+                    ))
+                  ) : (
+                    <ListItem
+                      title={`oops nothing in cart`}
+                      iconRight={"alert"}
+                    />
+                  )}
+                </View>
+              </View>
+              <View style={styles.input}>
+                <Text value="Extras" variant={"subheading"} color={"#002a0c"} />
+                <View>
+                  {addonItems.length > 0 ? (
+                    addonItems.map((addon) => (
+                      <ListItem
+                        key={addon.addon_id}
+                        title={`${addon.addon_quantity}x ${addon.addon_name} @ Ksh ${addon.addon_price}`}
+                        iconLeft={"minus"}
+                        iconRight={"plus"}
+                        handlePressRightIcon={() => addAddonToCart(addon)}
+                        handlePressLeftIcon={() =>
+                          removeAddonFromCart(addon.addon_id)
+                        }
+                      />
+                    ))
+                  ) : (
+                    <ListItem
+                      title={`oops you dont have any extras`}
+                      iconRight={"alert"}
+                    />
+                  )}
+                </View>
+              </View>
+              <View style={styles.input}>
+                <Text
+                  value="Comments"
+                  variant={"subheading"}
+                  color={"#002a0c"}
+                />
+                <Input
+                  defaultValue="Write a comment for your order"
+                  onChange={(text) => setComments(text)}
+                  multiline
+                  numberOfLines={4}
+                />
+              </View>
+
+              <View style={styles.row}>
+                <Text value="Total" variant={"subheading"} color={"#002a0c"} />
+                <Text
+                  value={`Ksh ${calculateTotal()}`}
+                  variant={"subheading"}
+                  color={"#002a0c"}
+                />
+              </View>
+              <View style={styles.input}>
+                <Pressable
+                  style={styles.cartButton}
+                  onPress={handleConfirmOrder}
+                >
+                  <Text value={`Place order`} variant={"important"} />
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Animation animation={cart} message="No items in cart" />
+            </View>
+          )}
         </View>
       )}
-      <View style={{ flex: 1 }}>
-        {cartItems.length > 0 ? (
-          <View>
-            <View style={styles.input}>
-              <Text
-                value="Your Order"
-                variant={"subheading"}
-                color={"#002a0c"}
-              />
-              <View>
-                {cartItems.length > 0 ? (
-                  cartItems.map((item) => (
-                    <ListItem
-                      key={item.item_id}
-                      title={`${item.item_quantity}x ${item.item_name} @ ${item.item_price}`}
-                      description={`notes: ${item.item_comments}`}
-                      iconLeft={"minus"}
-                      iconRight={"plus"}
-                      handlePressRightIcon={() => addToCart(item)}
-                      handlePressLeftIcon={() => removeFromCart(item.item_id)}
-                    />
-                  ))
-                ) : (
-                  <ListItem
-                    title={`oops nothing in cart`}
-                    iconRight={"alert"}
-                  />
-                )}
-              </View>
-            </View>
-            <View style={styles.input}>
-              <Text value="Extras" variant={"subheading"} color={"#002a0c"} />
-              <View>
-                {addonItems.length > 0 ? (
-                  addonItems.map((addon) => (
-                    <ListItem
-                      key={addon.addon_id}
-                      title={`${addon.addon_quantity}x ${addon.addon_name} @ Ksh ${addon.addon_price}`}
-                      iconLeft={"minus"}
-                      iconRight={"plus"}
-                      handlePressRightIcon={() => addAddonToCart(addon)}
-                      handlePressLeftIcon={() =>
-                        removeAddonFromCart(addon.addon_id)
-                      }
-                    />
-                  ))
-                ) : (
-                  <ListItem
-                    title={`oops you dont have any extras`}
-                    iconRight={"alert"}
-                  />
-                )}
-              </View>
-            </View>
-            <View style={styles.input}>
-              <Text value="Comments" variant={"subheading"} color={"#002a0c"} />
-              <Input
-                defaultValue="Write a comment for your order"
-                onChange={(text) => setComments(text)}
-                multiline
-                numberOfLines={4}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Text value="Total" variant={"subheading"} color={"#002a0c"} />
-              <Text
-                value={`Ksh ${calculateTotal()}`}
-                variant={"subheading"}
-                color={"#002a0c"}
-              />
-            </View>
-            <View style={styles.input}>
-              <Pressable style={styles.cartButton} onPress={handleConfirmOrder}>
-                <Text value={`Place order`} variant={"important"} />
-              </Pressable>
-            </View>
-          </View>
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              height: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Animation animation={cart} message="No items in cart" />
-          </View>
-        )}
-      </View>
       <StatusBar style="auto" />
     </ScrollView>
   );

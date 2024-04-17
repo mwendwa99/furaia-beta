@@ -1,31 +1,46 @@
-import React, { useRef } from "react";
+import React, { Component } from "react";
 import { SearchBar } from "react-native-elements";
 import { Platform } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
-export default function Search({ setSearchQuery }) {
-  const searchBarRef = useRef(null);
+class Search extends Component {
+  constructor(props) {
+    super(props);
+    this.searchBarRef = React.createRef();
+  }
 
-  const updateSearch = (search) => {
-    setSearchQuery(search);
+  updateSearch = (search) => {
+    this.props.setSearchQuery(search);
   };
 
-  return (
-    <SearchBar
-      ref={searchBarRef}
-      round
-      // platform={
-      //   Platform.OS === "ios"
-      //     ? "ios"
-      //     : Platform.OS === "android"
-      //     ? "android"
-      //     : "default"
-      // }
-      placeholder="Search Here..."
-      onChangeText={updateSearch}
-      containerStyle={{ backgroundColor: "#fff" }}
-      searchIcon={
-        Platform.OS === "ios" ? { size: 24, color: "black" } : { size: 24 }
-      }
-    />
-  );
+  handleBlur = () => {
+    if (Platform.OS === "android" && this.searchBarRef.current) {
+      this.searchBarRef.current.blur();
+    }
+  };
+
+  render() {
+    const { searchQuery } = this.props;
+
+    return (
+      <SearchBar
+        ref={this.searchBarRef}
+        round
+        style={{ width: "100%", backgroundColor: "#fff" }}
+        containerStyle={{
+          backgroundColor: "#fff",
+          borderBottomColor: "#fff",
+          borderTopColor: "#fff",
+        }}
+        inputContainerStyle={{ backgroundColor: "#fff" }}
+        placeholder="Search Here..."
+        onChangeText={this.updateSearch}
+        blurOnSubmit={true}
+        onBlur={this.handleBlur}
+        value={searchQuery} // If you want to pass the current search query value
+      />
+    );
+  }
 }
+
+export default Search;

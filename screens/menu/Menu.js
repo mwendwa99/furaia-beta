@@ -396,7 +396,7 @@ function MenuScreen({ navigation }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fafafa" }}>
-      <Searchbar setSearchQuery={setSearchQuery} />
+      <Searchbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <TabView
         navigationState={{
           index,

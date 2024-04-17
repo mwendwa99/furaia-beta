@@ -11,7 +11,11 @@ const initialState = {
 const orderSlice = createSlice({
   name: "order",
   initialState,
-  reducers: {},
+  reducers: {
+    resetSuccess: (state) => {
+      state.orderSuccess = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase("order/createOrder/pending", (state) => {
@@ -25,6 +29,7 @@ const orderSlice = createSlice({
       .addCase("order/createOrder/rejected", (state, action) => {
         state.loading = false;
         state.error = action.error;
+        state.orderSuccess = false;
       })
       .addCase("order/getOrders/pending", (state) => {
         state.loading = true;
@@ -50,5 +55,7 @@ const orderSlice = createSlice({
       });
   },
 });
+
+export const { resetSuccess } = orderSlice.actions;
 
 export default orderSlice.reducer;

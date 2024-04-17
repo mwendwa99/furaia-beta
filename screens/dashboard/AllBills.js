@@ -8,6 +8,7 @@ import {
 import { BillItem, Text } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBills } from "../../redux/bills/billActions";
+import { resetSuccess } from "../../redux/order/orderReducer";
 
 const AllBills = ({ navigation }) => {
   const { allBills, error, loading } = useSelector((state) => state.bill);
@@ -18,6 +19,10 @@ const AllBills = ({ navigation }) => {
   if (error) {
     console.log(error);
   }
+
+  useEffect(() => {
+    dispatch(resetSuccess());
+  }, [dispatch]);
 
   //   console.log(allBills);
 
