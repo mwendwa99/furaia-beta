@@ -11,7 +11,7 @@ const MenuListItem = ({ item }) => {
   // console.log("item", item);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Pressable style={styles.container} onPress={() => setModalVisible(true)}>
       {item && (
         <View style={styles.item}>
           <View style={styles.imageContainer}>
@@ -60,7 +60,7 @@ const MenuListItem = ({ item }) => {
           </View>
         </View>
       )}
-    </SafeAreaView>
+    </Pressable>
   );
 };
 export default MenuListItem;
@@ -68,7 +68,7 @@ export default MenuListItem;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fafafa",
-    flex: 1,
+    // flex: 1,
   },
   item: {
     display: "flex",
