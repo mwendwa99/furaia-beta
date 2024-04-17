@@ -74,7 +74,7 @@ const Orders = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text
         textStyle={{ padding: 10, alignSelf: "center" }}
-        value={`Receipt No: ${receipt}`}
+        value={`Bill No. #${receipt}`}
         variant="subheading"
         color="#002a0c"
       />

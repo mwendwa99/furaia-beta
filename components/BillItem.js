@@ -31,7 +31,7 @@ const CardItem = ({
         <View style={styles.row}>
           <View>
             <Text
-              value={`Receipt No: ${receipt}`}
+              value={`Bill No. #${receipt}`}
               variant="important"
               color={"#002a0c"}
             />

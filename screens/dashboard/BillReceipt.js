@@ -87,7 +87,7 @@ export default function BillReceipt({ route, navigation }) {
                 variant="important"
               />
               <Text
-                value={`Order#${item.order_number || "N/A"}`}
+                value={`Bill No. #${item.order_number || "N/A"}`}
                 color="#000"
                 variant="important"
               />
