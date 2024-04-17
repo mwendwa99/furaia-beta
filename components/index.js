@@ -12,3 +12,4 @@ export { default as Card } from "./Card";
 export { default as Searchbar } from "./Searchbar";
 export { default as BillItem } from "./BillItem";
 export { default as Calendar } from "./Calendar";
+export { default as Animation } from "./Animation";

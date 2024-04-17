@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Pressable, ScrollView, Image } from "react-native";
-import { DropdownIOS, ListItem, Text, Input } from "../../components";
+import {
+  DropdownIOS,
+  ListItem,
+  Text,
+  Input,
+  Animation,
+} from "../../components";
 // import { ShoppingCartContext } from "../../context/cartContext";
 import { useCart } from "../../context/cart";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { createOrder } from "../../redux/order/orderActions";
 import { danger, success } from "../../utils/toast";
+
+const orderComplete = require("../../assets/animations/complete.json");
+const cart = require("../../assets/animations/cart.json");
 
 const dropDownItems = [
   {
@@ -47,10 +56,16 @@ export default function Checkout({ navigation }) {
     calculateTotal,
   } = useCart();
 
-  // console.log(orderSuccess);
-  // console.log(order);
-  // console.log(error);
-  // console.log(cartItems);
+  const [showAnimation, setShowAnimation] = useState(false);
+
+  useEffect(() => {
+    if (orderSuccess) {
+      setShowAnimation(true);
+      setTimeout(() => {
+        navigation.navigate("All Bills");
+      }, 3000); // Adjust the duration as needed
+    }
+  }, [orderSuccess]);
 
   useEffect(() => {
     if (cartItems.length === 0 && !cartCleared) {
@@ -58,15 +73,6 @@ export default function Checkout({ navigation }) {
       setCartCleared(true);
     }
   }, [cartItems, cartCleared]); // Include cartCleared in dependencies
-
-  // useEffect(() => {
-  //   if (orderSuccess || order) {
-  //     clearCart();
-
-  //     success("Order confirmed");
-  //     navigation.navigate("Orders");
-  //   }
-  // }, [orderSuccess]);
 
   const handleConfirmOrder = () => {
     // get all item_id from cartItems and save them in an array e.g. [1, 2, 3]
@@ -101,18 +107,17 @@ export default function Checkout({ navigation }) {
     console.log(res);
 
     // dispatch(createOrder({ data: orderData, token }));
-
-    // if orderData has some data, alert order success and navigate to home
-    if (orderData) {
-      success("Order confirmed");
-      navigation.navigate("Orders");
-    }
   };
 
   // console.log(order);
 
   return (
     <ScrollView style={styles.container}>
+      {showAnimation && (
+        <View style={{ flex: 1 }}>
+          <Animation animation={orderComplete} message="Order confirmed!" />
+        </View>
+      )}
       <View style={{ flex: 1 }}>
         {cartItems.length > 0 ? (
           <View>
@@ -194,24 +199,13 @@ export default function Checkout({ navigation }) {
         ) : (
           <View
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               flex: 1,
-              marginVertical: 50,
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <View style={styles.logoContainer}>
-              <Image
-                source={require("../../assets/FURAIA.png")}
-                style={styles.logo}
-              />
-            </View>
-            <Text
-              value="Your cart is empty!"
-              variant={"subheading"}
-              color={"#002a0c"}
-            />
+            <Animation animation={cart} message="No items in cart" />
           </View>
         )}
       </View>

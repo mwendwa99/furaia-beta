@@ -13,13 +13,13 @@ export default function Search({ setSearchQuery }) {
     <SearchBar
       ref={searchBarRef}
       round
-      platform={
-        Platform.OS === "ios"
-          ? "ios"
-          : Platform.OS === "android"
-          ? "android"
-          : "default"
-      }
+      // platform={
+      //   Platform.OS === "ios"
+      //     ? "ios"
+      //     : Platform.OS === "android"
+      //     ? "android"
+      //     : "default"
+      // }
       placeholder="Search Here..."
       onChangeText={updateSearch}
       containerStyle={{ backgroundColor: "#fff" }}

@@ -406,9 +406,6 @@ function MenuScreen({ navigation }) {
           })),
         }}
         renderScene={renderScene}
-        // renderScene={() => (
-        //   <Text value="Hello" variant="important" coloe="#000" />
-        // )}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
         renderTabBar={renderTabBar}
