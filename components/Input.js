@@ -14,7 +14,6 @@ const Input = ({
   return !theme ? (
     <TextInput
       mode="outlined"
-      placeholder={defaultValue}
       outlineColor="#c3c3c3"
       textColor="#000000"
       placeholderTextColor="#71797e"

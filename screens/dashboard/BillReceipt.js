@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { Text, DropdownIOS } from "../../components";
+import { Text, DropdownIOS, Input } from "../../components";
 import { StatusBar } from "expo-status-bar";
 import { getOrderById } from "../../redux/order/orderActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,10 +41,15 @@ export default function BillReceipt({ route, navigation }) {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const { order } = useSelector((state) => state.order);
+  const [tipAmount, setTipAmount] = useState("");
 
   useEffect(() => {
     dispatch(getOrderById({ id: 1, token }));
   }, []);
+
+  const handleTipAmount = (value) => {
+    setTipAmount(value);
+  };
 
   const premiseNameMapping = {
     1: "Vanguard",
@@ -64,6 +69,7 @@ export default function BillReceipt({ route, navigation }) {
     return method ? method.label : "Unknown";
   };
 
+  // console.log(tipAmount);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.item}>
@@ -197,9 +203,9 @@ export default function BillReceipt({ route, navigation }) {
             <View style={{ width: "100%" }}>
               <Text
                 value={`Select Payment method`}
-                color="#000"
-                variant={"body"}
-                textStyle={{ alignSelf: "center", marginBottom: 10 }}
+                color="#002a0c"
+                variant={"important"}
+                textStyle={{ alignSelf: "center", margin: 10 }}
               />
               <DropdownIOS
                 iconLeft="credit-card"
@@ -210,14 +216,20 @@ export default function BillReceipt({ route, navigation }) {
               />
             </View>
             <View style={{ ...styles.column, marginVertical: 10 }}>
-              <Pressable style={styles.tipButton}>
+              <View style={styles.row}>
                 <Text
-                  value={`Tip`}
-                  color="brown"
+                  value={`Tip amount`}
+                  color="green"
                   variant={"important"}
-                  textStyle={{ alignSelf: "center" }}
+                  textStyle={{ marginRight: 10 }}
                 />
-              </Pressable>
+                <Input
+                  type={"numeric"}
+                  theme={true}
+                  onChange={handleTipAmount}
+                  inputStyle={{ marginLeft: 10, height: 30, width: "70%" }}
+                />
+              </View>
               <Pressable style={styles.payButton}>
                 <Text
                   value={`Pay Order`}
