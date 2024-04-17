@@ -8,6 +8,7 @@ import { prod } from "../env";
 
 const MenuListItem = ({ item }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  // console.log("item", item);
 
   return (
     <SafeAreaView style={styles.container}>

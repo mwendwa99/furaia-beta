@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text as RNText,
@@ -342,6 +342,9 @@ function MenuScreen({ navigation }) {
     ])
   );
 
+  // If there's no search query, show all items
+  const renderedMenu = searchQuery ? filteredMenu : menu?.data;
+
   // Render flatlist for each category
   const renderScene = SceneMap(
     Object.fromEntries(
@@ -349,9 +352,7 @@ function MenuScreen({ navigation }) {
         category,
         () => (
           <FlatList
-            // data={menuData.data[category]}
-            // data={menu.data[category]}
-            data={filteredMenu[category]}
+            data={renderedMenu[category]}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <MenuListItem item={item} />}
           />
@@ -360,7 +361,19 @@ function MenuScreen({ navigation }) {
     )
   );
 
-  // Render tab bar
+  // Get the index of the category containing the search query
+  const matchingIndex = categories.findIndex(
+    (category) => filteredMenu[category]?.length > 0
+  );
+
+  // Set the index to the matching category index
+  useEffect(() => {
+    if (searchQuery && matchingIndex !== -1) {
+      setIndex(matchingIndex);
+    }
+  }, [searchQuery, matchingIndex]);
+
+  // // Render tab bar
   const renderTabBar = (props) => (
     <TabBar
       {...props}
@@ -369,15 +382,7 @@ function MenuScreen({ navigation }) {
       renderLabel={({ route, focused }) => (
         <View
           style={{
-            borderWidth: 2,
-            borderColor: "#c3c3c3",
-            alignContent: "center",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 10,
-            paddingHorizontal: 10,
-            paddingVertical: 10,
-            width: 100,
+            ...styles.tabBar,
             backgroundColor: focused ? "#002a0c" : "#fafafa",
           }}
         >
@@ -401,6 +406,9 @@ function MenuScreen({ navigation }) {
           })),
         }}
         renderScene={renderScene}
+        // renderScene={() => (
+        //   <Text value="Hello" variant="important" coloe="#000" />
+        // )}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
         renderTabBar={renderTabBar}
@@ -417,6 +425,7 @@ const tabStyles = StyleSheet.create({
   tabBar: {
     backgroundColor: "#002a0c",
   },
+
   indicator: {
     backgroundColor: "#002a0c",
   },
@@ -437,6 +446,17 @@ const styles = StyleSheet.create({
     width: "50%",
     alignSelf: "center",
     marginVertical: 10,
+  },
+  tabBar: {
+    borderWidth: 2,
+    borderColor: "#c3c3c3",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    width: 100,
   },
 });
 
