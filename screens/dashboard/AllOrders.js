@@ -16,6 +16,7 @@ import { IconButton } from "react-native-paper";
 const Orders = ({ route, navigation }) => {
   const receipt = route.params?.receipt;
   const { orders, loading, error } = useSelector((state) => state.order);
+  const { menu } = useSelector((state) => state.menu);
   const [refreshing, setRefreshing] = useState(loading || false);
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -56,7 +57,20 @@ const Orders = ({ route, navigation }) => {
     // console.log(item);
   };
 
+  const handleAddOrder = () => {
+    if (menu === null || menu === undefined) {
+      alert("Please scan again");
+      navigation.navigate("Scanner", { screen: "Scan" });
+    } else {
+      navigation.navigate("Scanner", { screen: "Menu" });
+    }
+  };
+
   const handleTotalBill = () => {
+    if (orders === null || orders === undefined) {
+      alert("No orders found");
+      return;
+    }
     //  if findAcceptedOrders returns null alert
     const acceptedOrder = findAcceptedOrder(orders);
     if (acceptedOrder === null) {
@@ -124,7 +138,7 @@ const Orders = ({ route, navigation }) => {
           icon="plus"
           iconColor={"#002a0c"}
           size={50}
-          onPress={() => navigation.navigate("Scanner")}
+          onPress={handleAddOrder}
         />
         <Text
           value="Add order"

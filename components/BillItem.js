@@ -3,6 +3,7 @@ import { Card } from "react-native-paper";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Avatar from "./Avatar";
 import Text from "./Text";
+import { formatOrderDate } from "../utils/helper";
 
 const CardItem = ({
   premise,
@@ -54,7 +55,11 @@ const CardItem = ({
               variant="important"
               color={"#002a0c"}
             />
-            <Text value={`Date: ${date}`} variant="body" color={"#002a0c"} />
+            <Text
+              value={`Date: ${formatOrderDate(date)}`}
+              variant="body"
+              color={"#002a0c"}
+            />
           </View>
           <Text
             value={`Table No: ${table}`}

@@ -23,8 +23,6 @@ export default function Checkout({ navigation }) {
     (state) => state.order
   );
   const { token } = useSelector((state) => state.auth);
-  const [method, setMethod] = useState(null);
-  const [cartCleared, setCartCleared] = useState(false);
   const {
     cartItems,
     addonItems,
@@ -47,6 +45,8 @@ export default function Checkout({ navigation }) {
   useEffect(() => {
     if (showAnimation) {
       const animationTimeout = setTimeout(() => {
+        clearCart();
+
         setShowAnimation(false);
         navigation.navigate("All Bills");
       }, 3000); // Adjust the duration as needed
@@ -54,13 +54,6 @@ export default function Checkout({ navigation }) {
       return () => clearTimeout(animationTimeout);
     }
   }, [showAnimation, navigation]);
-
-  useEffect(() => {
-    if (cartItems.length === 0 && !cartCleared) {
-      clearCart();
-      setCartCleared(true);
-    }
-  }, [cartItems, cartCleared]); // Include cartCleared in dependencies
 
   const handleConfirmOrder = () => {
     // get all item_id from cartItems and save them in an array e.g. [1, 2, 3]
@@ -72,7 +65,7 @@ export default function Checkout({ navigation }) {
     const itemData = cartItems.map((item) => ({
       item_id: item.item_id,
       item_quantity: item.item_quantity,
-      item_comments: item.item_comments,
+      comments: item.item_comments,
     }));
     const addonData = addonItems.map((addon) => ({
       addon_id: addon.addon_id,
@@ -84,15 +77,14 @@ export default function Checkout({ navigation }) {
       // order_attribute: addonIds,
       item_data: itemData,
       addon_data: addonData,
-      order_comments: comments,
-      order_payment_id: method,
+      comments: comments,
       premise_id: 1,
       table_number: 1,
     };
 
-    const res = JSON.stringify(orderData);
+    // const res = JSON.stringify(orderData);
 
-    // console.log(res);
+    // console.log(orderData);
 
     dispatch(createOrder({ data: orderData, token }));
   };

@@ -1,10 +1,28 @@
-export const GetAllBillsApi = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(bill);
-    }, 2000);
-  });
+import axios from "axios";
+import handleError from "./error";
+import { prod } from "../env";
+
+export const GetAllBillsApi = async (token) => {
+  try {
+    const response = await axios.get(prod.URL + `/api/bills`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    return handleError(error);
+  }
 };
+
+// export const GetAllBillsApi = async () => {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve(bill);
+//     }, 2000);
+//   });
+// };
 
 const bill = [
   {

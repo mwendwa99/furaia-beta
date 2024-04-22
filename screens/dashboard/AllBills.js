@@ -16,6 +16,8 @@ const AllBills = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(loading || false);
   const dispatch = useDispatch();
 
+  // console.log(allBills);
+
   if (error) {
     console.log(error);
   }
@@ -45,10 +47,10 @@ const AllBills = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={allBills}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <BillItem
             premise={item.premise_name}
-            receipt={item.receipt_no}
+            receipt={item.bill_number}
             till={item.till_no}
             status={item.bill_status}
             icon="silverware-fork-knife"
@@ -60,7 +62,7 @@ const AllBills = ({ navigation }) => {
             navigate={handleNavigate}
           />
         )}
-        keyExtractor={(item) => item.till_no}
+        keyExtractor={(item) => item.bill_number.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
