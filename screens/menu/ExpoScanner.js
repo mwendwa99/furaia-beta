@@ -18,6 +18,8 @@ export default function Scanner({ navigation }) {
   const { token } = useSelector((state) => state.auth);
   const { menu } = useSelector((state) => state.menu);
 
+  // console.log({ menu });
+
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -33,24 +35,20 @@ export default function Scanner({ navigation }) {
   }, [displayText, dispatch]);
 
   useEffect(() => {
-    if (premiseId !== undefined && tableNumber !== undefined) {
-      console.log("Premise ID: ", premiseId);
-      console.log("Table Number: ", tableNumber);
+    if (menu === null && premiseId && token) {
       dispatch(getMenu({ storeNumber: premiseId, token }));
+    } else if (menu) {
+      navigation.navigate("Menu");
+    } else {
+      console.log("menu not found");
     }
-  }, [premiseId, tableNumber, token, dispatch]);
+  }, [menu, premiseId, token, dispatch, navigation]);
 
-  useEffect(() => {
-    if (menu) {
-      if (menu.data) {
-        // Navigate to the menu page
-        navigation.navigate("Menu");
-      } else {
-        // Notify the user that no menu is found
-        alert("Please scan again");
-      }
-    }
-  }, [menu, navigation]);
+  const handleBarCodeScanned = (data) => {
+    const result = JSON.stringify(data);
+    dispatch(getPremiseId(result));
+    dispatch(getPremiseTable(result));
+  };
 
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
@@ -67,11 +65,13 @@ export default function Scanner({ navigation }) {
         barCodeScannerSettings={{
           barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
         }}
-        onBarCodeScanned={(...args) => {
-          const data = args[0].data;
-          let result = JSON.stringify(data);
-          setDisplayText(result);
-        }}
+        onBarCodeScanned={({ data }) => handleBarCodeScanned(data)}
+
+        // onBarCodeScanned={(...args) => {
+        //   const data = args[0].data;
+        //   let result = JSON.stringify(data);
+        //   setDisplayText(result);
+        // }}
       />
 
       <View style={styles.scanBoxContainer}>

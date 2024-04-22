@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DropdownComponent = ({
   onChange,
@@ -35,7 +35,7 @@ const DropdownComponent = ({
           onChange(item.value);
         }}
         renderLeftIcon={() => (
-          <MaterialIcons
+          <MaterialCommunityIcons
             name={iconLeft}
             style={styles.icon}
             size={24}

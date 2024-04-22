@@ -92,7 +92,7 @@ export default function Profile({ navigation }) {
               onChange={(value) => setData({ ...data, gender: value })}
               selectedValue={user?.gender || "Other"}
               placeholder={user?.gender || "Empty"}
-              iconLeft={"transgender"}
+              iconLeft={"gender-transgender"}
             />
           </View>
           <View style={styles.row}>

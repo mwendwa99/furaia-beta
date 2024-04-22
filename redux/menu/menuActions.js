@@ -4,9 +4,10 @@ import { GetMenuApi } from "../../services/menu.service";
 
 export const getMenu = createAsyncThunk(
   "menu/getMenu",
-  ({ storeNumber, token }, { rejectWithValue }) => {
+  async ({ storeNumber, token }, { rejectWithValue }) => {
     try {
-      return GetMenuApi(storeNumber, token); // <-- return menu payload
+      const result = await GetMenuApi(storeNumber, token);
+      return result.data;
     } catch (error) {
       rejectWithValue(error); // <-- return rejection value
     }

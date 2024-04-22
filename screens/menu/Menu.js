@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
   Text as RNText,
   useWindowDimensions,
@@ -324,8 +324,8 @@ function MenuScreen({ navigation }) {
   const { menu } = useSelector((state) => state.menu);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const categories = Object.keys(menu?.data).filter(
-    (category) => menu?.data[category].length > 0
+  const categories = Object.keys(menu).filter(
+    (category) => menu[category].length > 0
   );
 
   const handleCheckout = () => {
@@ -336,14 +336,14 @@ function MenuScreen({ navigation }) {
   const filteredMenu = Object.fromEntries(
     categories.map((category) => [
       category,
-      menu?.data[category].filter((item) =>
+      menu[category].filter((item) =>
         item?.item_name.toLowerCase().includes(searchQuery.toLowerCase())
       ),
     ])
   );
 
   // If there's no search query, show all items
-  const renderedMenu = searchQuery ? filteredMenu : menu?.data;
+  const renderedMenu = searchQuery ? filteredMenu : menu;
 
   // Render flatlist for each category
   const renderScene = SceneMap(
