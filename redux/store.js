@@ -7,6 +7,7 @@ import menuReducer from "./menu/menuReducer";
 import orderReducer from "./order/orderReducer";
 import billReducer from "./bills/billReducer";
 import reservationReducer from "./reservation/reservationReducer";
+import premiseReducer from "./premise/premiseReducer";
 
 const rootPersistConfig = {
   key: "root",
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   order: orderReducer,
   bill: billReducer,
   reservation: reservationReducer,
+  premise: premiseReducer,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

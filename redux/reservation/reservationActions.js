@@ -5,24 +5,26 @@ import {
   GetReservationsApi,
 } from "../../services/reservation.service";
 
-export const getAllReservations = createAsyncThunk(
-  "reserve/getAllReservations",
-  (token, { rejectWithValue }) => {
+export const getUserReservations = createAsyncThunk(
+  "reserve/getUserReservations",
+  ({ token, userId }, { rejectWithValue }) => {
     try {
-      return GetReservationsApi(token);
+      const reservations = GetReservationsApi(token, userId);
+      return reservations;
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );
 
 export const createReservation = createAsyncThunk(
   "reserve/createReservation",
-  (data, { rejectWithValue }) => {
+  async ({ token, data }, { rejectWithValue }) => {
     try {
-      return CreateReservationApi(data);
+      const reservation = await CreateReservationApi(token, data);
+      return reservation;
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );

@@ -1,10 +1,12 @@
 export function getPremiseCode(str) {
-  const premiseCode = parseInt(str[0], 10);
+  // get the second character of the string
+  const premiseCode = str[1];
   return premiseCode;
 }
 
 export function getTableNumber(str) {
-  const tableNumber = parseInt(str[str.length - 1], 10);
+  //get the second last character of the string
+  const tableNumber = str[str.length - 2];
   return tableNumber;
 }
 

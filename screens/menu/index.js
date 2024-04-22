@@ -3,6 +3,7 @@ import React from "react";
 
 import Menu from "./Menu";
 import Scanner from "./Scanner";
+import ExpoScanner from "./ExpoScanner";
 import Camera from "./Camera";
 import Checkout from "./Checkout";
 
@@ -13,7 +14,7 @@ export const ScannerNavigator = () => {
     <Stack.Navigator initialRouteName="Scan">
       <Stack.Screen
         name="Scan"
-        component={Scanner}
+        component={ExpoScanner}
         // component={Camera}
         options={{ headerShown: false }}
       />

@@ -1,4 +1,4 @@
-import { getAllReservations, createReservation } from "./reservationActions";
+import { getUserReservations, createReservation } from "./reservationActions";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -14,14 +14,14 @@ const billSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getAllReservations.pending, (state) => {
+      .addCase(getUserReservations.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getAllReservations.fulfilled, (state, action) => {
+      .addCase(getUserReservations.fulfilled, (state, action) => {
         state.loading = false;
         state.userReservations = action.payload;
       })
-      .addCase(getAllReservations.rejected, (state, action) => {
+      .addCase(getUserReservations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -34,7 +34,7 @@ const billSlice = createSlice({
       })
       .addCase(createReservation.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload.error;
       });
   },
 });

@@ -7,41 +7,40 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-export const GetReservationsApi = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(userReservations);
-    }, 2000);
-  });
-};
-
-// export const GetReservationsApi = async (userId, token) => {
-//   try {
-//     const { data } = await axios.get(
-//       prod.URL + `/api/user-reservations/${userId}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-//     return data;
-//   } catch (error) {
-//     return handleError(error);
-//   }
+// export const GetReservationsApi = async () => {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve(userReservations);
+//     }, 2000);
+//   });
 // };
 
-export const CreateReservationApi = async (data) => {
+export const GetReservationsApi = async (token, userId) => {
   try {
-    const { reservation, token } = data;
+    const { data } = await axios.get(
+      prod.URL + `/api/user-reservations/${userId}`
+      // {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // }
+    );
+    return data;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const CreateReservationApi = async (token, data) => {
+  try {
     const { data: response } = await axios.post(
-      prod.URL + "/api/reserve",
-      reservation,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      prod.URL + "/api/reservations",
+      data
+      // {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // }
     );
     return response;
   } catch (error) {

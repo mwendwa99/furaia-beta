@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
 import { formatOrderDate } from "../../utils/helper";
 import { Button } from "react-native-paper";
+import { useSelector, useDispatch } from "react-redux";
+import { createReservation } from "../../redux/reservation/reservationActions";
 
 const premises = [
   {
@@ -23,34 +25,58 @@ const Reservation = ({ navigation }) => {
   const [premise, setPremise] = useState(null);
   const [date, setDate] = useState(null);
   const [description, setDescription] = useState("");
-  const [accepted, setAccepted] = useState(false);
+  const { user, token } = useSelector((state) => state.auth);
+  const { reservation, error, loading } = useSelector(
+    (state) => state.reservation
+  );
+  const dispatch = useDispatch();
 
-  // console.log(description);
+  // useEffect(() => {
+  //   if (reservation && !error && !loading) {
+  //     alert("Reservation created successfully");
+  //   }
+  // }, [reservation, error, loading]);
+
+  useEffect(() => {
+    if ((error && !loading) || reservation?.errorMessage) {
+      // Check if the error message contains the date format error
+      alert("Error creating reservation");
+    }
+  }, [error, loading]);
+
+  console.log("ERROR:", error);
+  console.log("RESERVATION:", reservation);
 
   const handleDescriptionChange = (value) => {
     setDescription(value);
   };
 
-  const handleReservation = () => {
+  const handleCrearteReservation = () => {
     if (!premise || !date || !description) {
       alert("Please fill all fields");
       return;
     }
     const formattedDate = date ? formatOrderDate(date) : "";
     const data = {
-      premise: premise,
-      check_in_date: formattedDate,
+      user: user?.id,
+      check_in_date: date,
+      premise,
       description,
-      is_accepted: accepted,
     };
-    console.log(data);
-    alert("Reservation made successfully!");
-    // setAccepted(true);
+    // console.log("DATA:", data);
+    dispatch(createReservation({ token, data }));
   };
 
   return (
     <ScrollView>
       <View style={styles.container}>
+        {loading && (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
         <View style={styles.column}>
           <ListItem
             title="View your reservations"
@@ -89,7 +115,7 @@ const Reservation = ({ navigation }) => {
           />
           <Button
             mode="contained-tonal"
-            onPress={handleReservation}
+            onPress={handleCrearteReservation}
             style={styles.button}
           >
             Reserve

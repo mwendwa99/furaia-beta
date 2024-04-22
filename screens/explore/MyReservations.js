@@ -1,7 +1,7 @@
 import { View, StyleSheet, FlatList, RefreshControl } from "react-native";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllReservations } from "../../redux/reservation/reservationActions";
+import { getUserReservations } from "../../redux/reservation/reservationActions";
 import { formatOrderDate } from "../../utils/helper";
 import { Text } from "../../components";
 
@@ -10,18 +10,19 @@ export default function MyReservations() {
   const { userReservations, loading } = useSelector(
     (state) => state.reservation
   );
-  const { token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
   const [refreshing, setRefreshing] = useState(false || loading);
 
-  //   console.log(userReservations);
+  console.log(userReservations);
+  console.log(user);
 
   useEffect(() => {
-    dispatch(getAllReservations(token));
+    dispatch(getUserReservations({ token, userId: user?.id }));
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    dispatch(getAllReservations(token));
+    dispatch(getUserReservations({ token, userId: user?.id }));
     setRefreshing(false);
   };
 
