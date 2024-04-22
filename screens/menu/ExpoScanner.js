@@ -8,12 +8,15 @@ import {
   getPremiseId,
   getPremiseTable,
 } from "../../redux/premise/premiseActions";
+import { getMenu } from "../../redux/menu/menuActions";
 
-export default function Scanner() {
+export default function Scanner({ navigation }) {
   const [displayText, setDisplayText] = useState("");
   const [hasPermission, setHasPermission] = useState(null);
   const dispatch = useDispatch();
   const { premiseId, tableNumber } = useSelector((state) => state.premise);
+  const { token } = useSelector((state) => state.auth);
+  const { menu } = useSelector((state) => state.menu);
 
   useEffect(() => {
     (async () => {
@@ -29,6 +32,26 @@ export default function Scanner() {
     }
   }, [displayText, dispatch]);
 
+  useEffect(() => {
+    if (premiseId !== undefined && tableNumber !== undefined) {
+      console.log("Premise ID: ", premiseId);
+      console.log("Table Number: ", tableNumber);
+      dispatch(getMenu({ storeNumber: premiseId, token }));
+    }
+  }, [premiseId, tableNumber, token, dispatch]);
+
+  useEffect(() => {
+    if (menu) {
+      if (menu.data) {
+        // Navigate to the menu page
+        navigation.navigate("Menu");
+      } else {
+        // Notify the user that no menu is found
+        alert("Please scan again");
+      }
+    }
+  }, [menu, navigation]);
+
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }
@@ -36,8 +59,6 @@ export default function Scanner() {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-
-  // console.log(premiseId, tableNumber);
 
   return (
     <View style={styles.container}>
