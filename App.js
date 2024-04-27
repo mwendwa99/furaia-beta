@@ -2,11 +2,12 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect, useRef } from "react";
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet, Platform, BackHandler, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import NetInfo from "@react-native-community/netinfo";
 
 import { store, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -29,6 +30,30 @@ export default function App() {
   const responseListener = useRef();
 
   useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (!state.isConnected) {
+        Alert.alert(
+          "No Internet Connection",
+          "Please check your internet connection.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // Close the app when user clicks OK
+                BackHandler.exitApp();
+              },
+            },
+          ]
+        );
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     registerForPushNotificationsAsync().then((token) => {
       setExpoPushToken(token);
       AsyncStorage.setItem("expoPushToken", token);
@@ -43,6 +68,14 @@ export default function App() {
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
       });
+
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -68,7 +101,6 @@ export default function App() {
     </Provider>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

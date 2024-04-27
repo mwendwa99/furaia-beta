@@ -31,6 +31,7 @@ const Register = ({ navigation }) => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [age, setAge] = useState(0);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const dispatch = useDispatch();
@@ -57,8 +58,10 @@ const Register = ({ navigation }) => {
       confirmPassword === "" ||
       email === "" ||
       checked === false ||
-      gender === ""
+      gender === "" ||
+      age === 0
     ) {
+      alert("All fields are required!");
       warning("All fields are required!");
       return;
     }
@@ -80,6 +83,7 @@ const Register = ({ navigation }) => {
       password: password,
       password_confirm: confirmPassword,
       email: email,
+      age,
       terms_accepted: checked,
       gender,
     };
@@ -131,15 +135,23 @@ const Register = ({ navigation }) => {
               onChange={setGender}
               selectedValue={gender}
               placeholder={"Select Gender"}
-              iconLeft={"transgender"}
+              iconLeft={"gender-transgender"}
             />
           </View>
+          {/* Age input*/}
           <View style={styles.row}>
             <Input
               theme={true}
               onChange={setPhone}
-              inputStyle={{ ...styles.input, width: "100%" }}
+              inputStyle={{ ...styles.input, width: "49%" }}
               defaultValue={"Phone"}
+              type={"numeric"}
+            />
+            <Input
+              theme={true}
+              onChange={setAge}
+              inputStyle={{ ...styles.input, width: "49%" }}
+              defaultValue={"Age"}
               type={"numeric"}
             />
           </View>
@@ -202,9 +214,11 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: "center",
+    justifyContent: "center",
+    height: 60,
   },
   logo: {
-    height: 100,
+    objectFit: "cover",
   },
   section: {
     backgroundColor: "#fff",

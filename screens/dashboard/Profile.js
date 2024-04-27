@@ -28,7 +28,7 @@ export default function Profile({ navigation }) {
   const { user, token, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  // console.log(user);
+  console.log(user.age);
   // console.log("error", error);
 
   useEffect(() => {
