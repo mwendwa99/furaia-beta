@@ -11,7 +11,7 @@ const Login = ({ navigation }) => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const { isVerified, token, error, otp, loading } = useSelector(
+  const { isVerified, token, error, otp, loading, roles } = useSelector(
     (state) => state.auth
   );
 
@@ -32,17 +32,16 @@ const Login = ({ navigation }) => {
   }, [isVerified]);
 
   useEffect(() => {
-    if (!isVerified && token) {
+    if (!isVerified && token && roles.length !== 0) {
       success("Enter OTP", 2000);
       navigation.navigate("Otp", { mobile: phone, navigateTo: "Login" });
     }
   }, [isVerified, token]);
 
-  if (error) {
-    danger("error", 2000);
-    alert("error logging in");
-    console.log("error", error);
-  }
+  // if (error) {
+  //   danger("error", 2000);
+  //   console.log("error", error);
+  // }
 
   // if user is verified and user has a token, get user data
   useEffect(() => {
@@ -64,7 +63,6 @@ const Login = ({ navigation }) => {
 
   const handleLogin = () => {
     if (phone === "" || phone.length !== 10) {
-      alert("invalid phone number");
       danger("invalid phone number", 2000);
       console.log("invalid phone number");
       return;
@@ -108,9 +106,6 @@ const Login = ({ navigation }) => {
           <View style={{ ...styles.row, flexDirection: "row" }}>
             <Pressable onPress={() => navigation.navigate("ForgotPin")}>
               <Text value="Forgot password" variant="body" />
-            </Pressable>
-            <Pressable onPress={() => navigation.navigate("Register")}>
-              <Text value="Create account" variant="body" />
             </Pressable>
           </View>
         </View>

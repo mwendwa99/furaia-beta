@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { PURGE } from "redux-persist";
 
 const initialState = {
   user: null,
-  roles: null,
+  roles: [],
   loading: false,
   error: null,
   isVerified: false,
   token: null,
   otp: null,
-  pinReset: false,
   expoPushToken: null,
 };
 
@@ -28,7 +28,8 @@ const authSlice = createSlice({
       .addCase("auth/login/fulfilled", (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.otp = action.payload.otp;
+        state.roles = action.payload.roles;
+        // state.otp = action.payload.otp;
       })
       .addCase("auth/login/rejected", (state, action) => {
         state.loading = false;
@@ -56,6 +57,28 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase("auth/register/pending", (state) => {
+        state.loading = true;
+      })
+      .addCase("auth/register/fulfilled", (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase("auth/register/rejected", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase("auth/verifyToken/pending", (state) => {
+        state.loading = true;
+      })
+      .addCase("auth/verifyToken/fulfilled", (state, action) => {
+        state.loading = false;
+        state.token = action.payload;
+      })
+      .addCase("auth/verifyToken/rejected", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase("auth/getUser/pending", (state) => {
         state.loading = true;
       })
@@ -64,18 +87,13 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase("auth/getUser/rejected", (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       })
       .addCase("auth/logout/pending", (state) => {
         state.loading = true;
       })
-      .addCase("auth/logout/fulfilled", (state) => {
-        state.loading = false;
-        state.user = null;
-        state.token = null;
-        state.isVerified = false;
-        state.otp = null;
+      .addCase("auth/logout/fulfilled", (state, action) => {
+        state = initialState;
       })
       .addCase("auth/logout/rejected", (state, action) => {
         state.loading = false;
@@ -92,23 +110,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase("auth/register/pending", (state) => {
-        state.loading = true;
-      })
-      .addCase("auth/register/fulfilled", (state, action) => {
-        state.loading = false;
-        state.user = action.payload.data;
-      })
-      .addCase("auth/register/rejected", (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
       .addCase("auth/resetPin/pending", (state) => {
         state.loading = true;
       })
       .addCase("auth/resetPin/fulfilled", (state, action) => {
         state.loading = false;
-        state.pinReset = true;
+        state.user = action.payload.data;
       })
       .addCase("auth/resetPin/rejected", (state, action) => {
         state.loading = false;
@@ -119,11 +126,14 @@ const authSlice = createSlice({
       })
       .addCase("auth/forgotPin/fulfilled", (state, action) => {
         state.loading = false;
-        state.otp = action.payload.otp;
+        state.otp = action.payload;
       })
       .addCase("auth/forgotPin/rejected", (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(PURGE, () => {
+        return initialState;
       });
   },
 });

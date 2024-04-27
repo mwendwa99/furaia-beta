@@ -1,156 +1,169 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-import {
-  setLoading,
-  setError,
-  setUser,
-  clearError,
-  setOtp,
-} from "./authReducer";
-import {
-  LoginApi,
-  RegisterApi,
-  ResetPinApi,
-  ForgotPinApi,
-  RequestOtp,
-  ChangePassword,
-  VerifyOtp,
-  LogoutApi,
-  GetUserApi,
-  UpdateProfileApi,
-} from "../../services/auth.service";
+import api from "../../services/api.service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 export const login = createAsyncThunk(
   "auth/login",
-  ({ mobile, password }, { rejectWithValue }) => {
+  async ({ mobile, password }, { rejectWithValue }) => {
     try {
-      return LoginApi({ mobile, password });
+      // Make API request to login
+      const response = await axios.post(
+        "https://sapient.stackthon.com/api/login",
+        {
+          mobile,
+          password,
+        }
+      );
+      // Extract access token from response
+      const accessToken = response.data.token;
+      // Save access token to AsyncStorage
+      await AsyncStorage.setItem("accessToken", accessToken);
+      // Return the response data
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
+      // Handle error
+      return rejectWithValue({
+        message: error.detail,
+        status: error.response.status,
+      });
+      // return rejectWithValue(error);
     }
   }
 );
 
-export const verifyOtp = createAsyncThunk(
-  "auth/verifyOtp",
-  (otp, { rejectWithValue }) => {
-    try {
-      return VerifyOtp(otp);
-    } catch (error) {
-      rejectWithValue(error);
-    }
+export const verifyOtp = createAsyncThunk(async (otp, { rejectWithValue }) => {
+  try {
+    const response = await api.post("verify-otp", {
+      otp,
+    });
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({
+      message: error.response.data.detail,
+      status: error.response.status,
+    });
   }
-);
+});
 
 export const requestOtp = createAsyncThunk(
   "auth/requestOtp",
-  (mobile, { rejectWithValue }) => {
+  async (mobile, { rejectWithValue }) => {
     try {
-      return RequestOtp(mobile);
+      const response = await api.post("request-otp", {
+        mobile,
+      });
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
 
 export const getUser = createAsyncThunk(
   "auth/getUser",
-  (token, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      return GetUserApi(token);
+      const { data } = await api.get("user");
+      return data;
     } catch (error) {
-      rejectWithValue(error);
-      return error;
+      rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
 
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
-  ({ data, token }, { rejectWithValue }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      return UpdateProfileApi(data, token);
+      const response = await api.patch("user", data);
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
+      rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
 
 export const logout = createAsyncThunk(
   "auth/logout",
-  (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      return LogoutApi();
+      const response = await api.get("logout");
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
-    }
-  }
-);
-
-export const register = createAsyncThunk(
-  "auth/register",
-  (data, { rejectWithValue }) => {
-    try {
-      return RegisterApi(data);
-    } catch (error) {
-      rejectWithValue(error);
-    }
-  }
-);
-
-export const forgotPin = createAsyncThunk(
-  "auth/forgotPin",
-  (data, { rejectWithValue }) => {
-    try {
-      return ForgotPinApi(data);
-    } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
 
 export const resetPin = createAsyncThunk(
   "auth/resetPin",
-  (data, { rejectWithValue }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      return ResetPinApi(data);
+      const response = await api.post("reset", data);
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
 
-// export const forgotPin = createAsyncThunk(
-//   "auth/forgotPin",
-//   async (data, { dispatch }) => {
-//     try {
-//       dispatch(setLoading(true));
-//       const response = await ForgotPinApi(data);
-//       dispatch(setOtp(response.otp));
-//       dispatch(clearError());
-//       dispatch(setLoading(false));
-//     } catch (error) {
-//       dispatch(setError(error));
-//     }
-//   }
-// );
+export const forgotPin = createAsyncThunk(
+  "auth/forgotPin",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await api.post("forgot", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
+    }
+  }
+);
 
 export const changePassword = createAsyncThunk(
   "auth/changePassword",
-  async (data, { dispatch }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      dispatch(setLoading(true));
-      const response = await ChangePassword(data);
-      dispatch(clearError());
-      dispatch(setLoading(false));
+      const response = await api.post("change-password", data);
+      return response.data;
     } catch (error) {
-      dispatch(
-        setError({
-          code: error.code,
-          message: error.message,
-          origin: "changePassword",
-        })
-      );
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
+    }
+  }
+);
+
+export const register = createAsyncThunk(
+  "auth/register",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await api.post("register", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
