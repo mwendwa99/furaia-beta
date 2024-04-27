@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
-import { formatOrderDate } from "../../utils/helper";
+import { getISODate } from "../../utils/helper";
 import { Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { createReservation } from "../../redux/reservation/reservationActions";
+import { clearError } from "../../redux/reservation/reservationReducer";
 
 const premises = [
   {
     label: "Vanguard",
     value: 1,
   },
-  {
-    label: "Java",
-    value: 2,
-  },
-  {
-    label: "Kukito",
-    value: 3,
-  },
+  // {
+  //   label: "Java",
+  //   value: 2,
+  // },
+  // {
+  //   label: "Kukito",
+  //   value: 3,
+  // },
 ];
 
 const Reservation = ({ navigation }) => {
@@ -42,6 +43,7 @@ const Reservation = ({ navigation }) => {
       // Check if the error message contains the date format error
       alert("Error creating reservation");
     }
+    dispatch(clearError());
   }, [error, loading]);
 
   console.log("ERROR:", error);
@@ -56,15 +58,15 @@ const Reservation = ({ navigation }) => {
       alert("Please fill all fields");
       return;
     }
-    const formattedDate = date ? formatOrderDate(date) : "";
+    const formattedDate = date ? getISODate(date) : "";
     const data = {
       user: user?.id,
-      check_in_date: date,
+      check_in_date: formattedDate,
       premise,
       description,
     };
     // console.log("DATA:", data);
-    dispatch(createReservation({ token, data }));
+    dispatch(createReservation({ data }));
   };
 
   return (
@@ -97,7 +99,7 @@ const Reservation = ({ navigation }) => {
             onChange={setPremise}
             selectedValue={premise}
             placeholder={"Select Premise"}
-            iconLeft={"restaurant"}
+            iconLeft={"silverware-fork-knife"}
           />
         </View>
         <View style={styles.column}>

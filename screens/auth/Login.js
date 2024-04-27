@@ -40,6 +40,7 @@ const Login = ({ navigation }) => {
 
   if (error) {
     danger("error", 2000);
+    alert("error logging in");
     console.log("error", error);
   }
 
@@ -63,6 +64,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = () => {
     if (phone === "" || phone.length !== 10) {
+      alert("invalid phone number");
       danger("invalid phone number", 2000);
       console.log("invalid phone number");
       return;

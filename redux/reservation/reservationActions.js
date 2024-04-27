@@ -5,6 +5,8 @@ import {
   GetReservationsApi,
 } from "../../services/reservation.service";
 
+import api from "../../services/api.service";
+
 export const getUserReservations = createAsyncThunk(
   "reserve/getUserReservations",
   ({ token, userId }, { rejectWithValue }) => {
@@ -19,9 +21,9 @@ export const getUserReservations = createAsyncThunk(
 
 export const createReservation = createAsyncThunk(
   "reserve/createReservation",
-  async ({ token, data }, { rejectWithValue }) => {
+  async ({ data }, { rejectWithValue }) => {
     try {
-      const reservation = await CreateReservationApi(token, data);
+      const reservation = await api.post("reservations", data);
       return reservation;
     } catch (error) {
       return rejectWithValue(error);

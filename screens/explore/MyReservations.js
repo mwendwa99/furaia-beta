@@ -14,7 +14,7 @@ export default function MyReservations() {
   const [refreshing, setRefreshing] = useState(false || loading);
 
   console.log(userReservations);
-  console.log(user);
+  // console.log(user);
 
   useEffect(() => {
     dispatch(getUserReservations({ token, userId: user?.id }));
@@ -34,6 +34,7 @@ export default function MyReservations() {
             value="You have no reservations"
             color="#002a0c"
             variant="important"
+            textStyle={{ textAlign: "center" }}
           />
         ))}
       {userReservations && userReservations.length > 0 && (

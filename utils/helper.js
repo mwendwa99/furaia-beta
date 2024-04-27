@@ -49,9 +49,14 @@ export function formatOrderDate(dateString) {
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    // hour: "2-digit",
+    // minute: "2-digit",
   });
+}
+
+//get date in YYYY-MM-DD format
+export function getISODate(date) {
+  return date.toISOString().split("T")[0];
 }
 
 // finds orders that have been accepted

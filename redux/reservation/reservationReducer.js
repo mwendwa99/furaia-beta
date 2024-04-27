@@ -11,7 +11,11 @@ const initialState = {
 const billSlice = createSlice({
   name: "reservation",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUserReservations.pending, (state) => {
@@ -34,9 +38,11 @@ const billSlice = createSlice({
       })
       .addCase(createReservation.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload;
       });
   },
 });
+
+export const { clearError } = billSlice.actions;
 
 export default billSlice.reducer;
