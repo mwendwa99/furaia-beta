@@ -21,16 +21,12 @@ const dropDownItems = [
     value: "1",
   },
   {
-    label: "Visa",
+    label: "PDQ",
     value: "2",
   },
   {
-    label: "PDQ",
-    value: "3",
-  },
-  {
     label: "Cash",
-    value: "4",
+    value: "3",
   },
 ];
 
@@ -91,6 +87,16 @@ export default function BillReceipt({ route, navigation }) {
     if (isNaN(total)) {
       total = parseInt(total) || 0;
       return total;
+    }
+
+    if (!method) {
+      alert("Payment method is required");
+      return;
+    }
+
+    if (method !== "1") {
+      alert("Payment method not yet available");
+      return;
     }
 
     console.log({
