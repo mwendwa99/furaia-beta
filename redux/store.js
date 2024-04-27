@@ -12,7 +12,6 @@ import premiseReducer from "./premise/premiseReducer";
 const rootPersistConfig = {
   key: "root",
   storage: AsyncStorage,
-  keyPrefix: "redux-",
   whitelist: [],
 };
 

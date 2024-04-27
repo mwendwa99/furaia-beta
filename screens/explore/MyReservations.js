@@ -13,16 +13,16 @@ export default function MyReservations() {
   const { token, user } = useSelector((state) => state.auth);
   const [refreshing, setRefreshing] = useState(false || loading);
 
-  console.log(userReservations);
+  // console.log(userReservations);
   // console.log(user);
 
   useEffect(() => {
-    dispatch(getUserReservations({ token, userId: user?.id }));
+    dispatch(getUserReservations({ userId: user?.id }));
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    dispatch(getUserReservations({ token, userId: user?.id }));
+    dispatch(getUserReservations({ userId: user?.id }));
     setRefreshing(false);
   };
 
