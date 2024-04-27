@@ -5,22 +5,22 @@ import Avatar from "./Avatar";
 import Text from "./Text";
 
 const CardItem = ({
+  id,
   orderNumber,
   date,
   totalAmount,
-  action,
   status,
   items,
   premise,
   handleOpenReceipt,
-  deliveryNumber,
+  tableNumber,
 }) => {
-  // console.log(items);
   return (
     <Pressable onPress={handleOpenReceipt}>
       <Card style={styles.card}>
         <Card.Title
-          title={`${premise}`}
+          title={`${tableNumber ? `Table No. ${tableNumber}` : premise}`}
+          subtitle={`status: ${status}`}
           right={(props) => (
             <Avatar
               {...props}
@@ -46,28 +46,20 @@ const CardItem = ({
         />
         <Card.Content>
           <View style={styles.row}>
-            <View>
-              <Text
-                value={`Order No: ${orderNumber}`}
-                variant="important"
-                color={"#002a0c"}
-              />
-              <Text
-                value={`Status: ${status}`}
-                variant="important"
-                color={"#002a0c"}
-                textStyle={{ marginBottom: 10 }}
-              />
-            </View>
+            <Text
+              value={`Order No: ${orderNumber}`}
+              variant="body"
+              color={"#002a0c"}
+            />
           </View>
           <Text
             value={`Total Items: ${items.length}`}
-            variant="important"
+            variant="body"
             color={"#002a0c"}
             textStyle={{ marginBottom: 10 }}
           />
+          <Text value={`Date: ${date} `} variant="body" color={"#002a0c"} />
           <View style={styles.row}>
-            <Text value={`Date: ${date} `} variant="body" color={"#002a0c"} />
             <Text
               value={`Total: ${totalAmount} `}
               variant="important"
@@ -75,24 +67,6 @@ const CardItem = ({
             />
           </View>
         </Card.Content>
-        {status === "accepted" && (
-          <Pressable style={styles.confirm} onPress={action}>
-            <Text
-              value="Confirm Delivered"
-              variant="important"
-              color="#fafafa"
-            />
-          </Pressable>
-        )}
-        {status === "delivered" && (
-          <View style={styles.deliverButton}>
-            <Text
-              value={`Delivery No. ${deliveryNumber || "N/A"}`}
-              variant="important"
-              color="#002a0c"
-            />
-          </View>
-        )}
       </Card>
     </Pressable>
   );
@@ -105,18 +79,6 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: "#fafafa",
     padding: 10,
-  },
-  confirm: {
-    backgroundColor: "#00A36C",
-    color: "#fafafa",
-    borderColor: "#002a0c",
-    padding: 10,
-    borderRadius: 10,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 0.5,
-    margin: 10,
   },
   deliverButton: {
     backgroundColor: "#fafafa",
@@ -134,6 +96,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+    width: "100%",
   },
 });

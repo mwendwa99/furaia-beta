@@ -21,7 +21,7 @@ const CardItem = ({
   <TouchableOpacity onPress={() => navigate(receipt)}>
     <Card style={styles.card}>
       <Card.Title
-        title={`${premise}`}
+        title={`${premise || "No Name"}`}
         left={(props) => (
           <Avatar {...props} size={50} bgColor="#002a0c" icon={icon} />
         )}
@@ -43,7 +43,7 @@ const CardItem = ({
             />
           </View>
           <Text
-            value={`Till No: ${till}`}
+            value={`Till No: ${till || "No Till"}`}
             variant="important"
             color={"#002a0c"}
           />
@@ -51,7 +51,7 @@ const CardItem = ({
         <View style={styles.row}>
           <View>
             <Text
-              value={`Waiter Name: ${waiter}`}
+              value={`Waiter Name: ${waiter || "No Waiter"}`}
               variant="important"
               color={"#002a0c"}
             />
@@ -61,11 +61,6 @@ const CardItem = ({
               color={"#002a0c"}
             />
           </View>
-          <Text
-            value={`Table No: ${table}`}
-            variant="important"
-            color={"#002a0c"}
-          />
         </View>
         <View style={styles.row}>
           <Text

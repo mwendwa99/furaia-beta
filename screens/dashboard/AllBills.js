@@ -8,70 +8,85 @@ import {
 import { BillItem, Text } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBills } from "../../redux/bills/billActions";
-import { resetSuccess } from "../../redux/order/orderReducer";
 
-const AllBills = ({ navigation }) => {
-  const { allBills, error, loading } = useSelector((state) => state.bill);
-  const { token } = useSelector((state) => state.auth);
+export default function AllBills({ navigation, route }) {
+  const title = route.params?.title;
+  const status = route.params?.status;
+  const { loading, allBills } = useSelector((state) => state.bill);
+  const { user } = useSelector((state) => state.auth);
   const [refreshing, setRefreshing] = useState(loading || false);
+
   const dispatch = useDispatch();
 
-  // console.log(allBills);
-
-  if (error) {
-    console.log(error);
-  }
+  // console.log("allBills", allBills);
+  // console.log("allBills", allBills);
+  // console.log("user", user);
 
   useEffect(() => {
-    dispatch(resetSuccess());
+    navigation.setOptions({ title });
+  }, [navigation, title]);
+
+  useEffect(() => {
+    dispatch(getAllBills({ outletId: user?.outlet_id, status }));
   }, [dispatch]);
 
-  //   console.log(allBills);
-
-  useEffect(() => {
-    dispatch(getAllBills(token));
-  }, [dispatch, token]);
-
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    dispatch(getAllBills(token));
+    dispatch(getAllBills({ outletId: user?.outlet_id, status }));
     setRefreshing(false);
   };
 
-  const handleNavigate = (receipt) => {
-    // console.log(receipt);
-    navigation.navigate("All Orders", { receipt });
+  const handleNavigate = (orders, receipt, billStatus, total) => {
+    navigation.navigate("All Orders", {
+      orders,
+      receipt,
+      billStatus,
+      total,
+      amountPaid: 0,
+    });
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      {allBills && allBills.length === 0 && (
+        <Text
+          value={`${title} not found`}
+          variant="body"
+          color="gray"
+          textStyle={{ textAlign: "center", marginVertical: 20 }}
+        />
+      )}
       <FlatList
         data={allBills}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <BillItem
-            premise={item.premise_name}
-            receipt={item.bill_number}
-            till={item.till_no}
-            status={item.bill_status}
+            premise={item?.premise_name}
+            receipt={item?.bill_number}
+            till={item?.till_no}
+            status={item?.bill_status}
             icon="silverware-fork-knife"
-            waiter={item.waiter_name}
-            table={item.table_no}
-            amountPaid={item.amount_paid}
-            totalAmount={item.total_amount}
-            date={item.created_at}
-            navigate={handleNavigate}
+            waiter={item?.waiter_name}
+            amountPaid={item?.amount_paid}
+            totalAmount={item?.total_amount}
+            date={item?.created_at}
+            navigate={() =>
+              handleNavigate(
+                item?.orders,
+                item?.bill_number,
+                item?.bill_payment_status,
+                item?.total_amount
+              )
+            }
           />
         )}
-        keyExtractor={(item) => item.bill_number.toString()}
+        keyExtractor={(item, index) => index.toString()} // Convert index to string
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </SafeAreaView>
   );
-};
-
-export default AllBills;
+}
 
 const styles = StyleSheet.create({
   container: {

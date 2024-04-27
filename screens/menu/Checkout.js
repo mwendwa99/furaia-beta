@@ -12,6 +12,7 @@ import { useCart } from "../../context/cart";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { createOrder } from "../../redux/order/orderActions";
+import { resetOrder } from "../../redux/order/orderReducer";
 
 const orderComplete = require("../../assets/animations/complete.json");
 const cart = require("../../assets/animations/cart.json");
@@ -22,7 +23,6 @@ export default function Checkout({ navigation }) {
   const { order, orderSuccess, loading, error } = useSelector(
     (state) => state.order
   );
-  const { token } = useSelector((state) => state.auth);
   const {
     cartItems,
     addonItems,
@@ -36,11 +36,14 @@ export default function Checkout({ navigation }) {
 
   const [showAnimation, setShowAnimation] = useState(false);
 
+  console.log(order);
+
   useEffect(() => {
-    if (orderSuccess) {
+    if (order) {
       setShowAnimation(true);
+      dispatch(resetOrder());
     }
-  }, [orderSuccess]);
+  }, [order]);
 
   useEffect(() => {
     if (showAnimation) {
@@ -48,7 +51,7 @@ export default function Checkout({ navigation }) {
         clearCart();
 
         setShowAnimation(false);
-        navigation.navigate("All Bills");
+        navigation.navigate("Dashboard", { screen: "All Bills" });
       }, 3000); // Adjust the duration as needed
 
       return () => clearTimeout(animationTimeout);
@@ -84,9 +87,8 @@ export default function Checkout({ navigation }) {
 
     // const res = JSON.stringify(orderData);
 
-    // console.log(orderData);
-
-    dispatch(createOrder({ data: orderData, token }));
+    dispatch(createOrder({ orderData }));
+    console.log("log", orderData);
   };
 
   // console.log(order);

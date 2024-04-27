@@ -1,38 +1,50 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import { CreateOrderApi, GetOrdersApi } from "../../services/order.service";
-
-export const createOrder = createAsyncThunk(
-  "order/createOrder",
-  ({ data, token }, { rejectWithValue }) => {
-    try {
-      return CreateOrderApi(data, token);
-    } catch (error) {
-      rejectWithValue(error);
-    }
-  }
-);
+// import axios from "axios";
+// import { prod } from "../../env";
+import api from "../../services/api.service";
 
 export const getOrders = createAsyncThunk(
   "order/getOrders",
-  (token, { rejectWithValue }) => {
+  async ({ storeNumber, token }, { rejectWithValue }) => {
     try {
-      // console.log({ token });
-      return GetOrdersApi(token);
+      const response = await api.get(`orders/${storeNumber}`);
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );
 
 export const getOrderById = createAsyncThunk(
   "order/getOrderById",
-  ({ id, token }, { rejectWithValue }) => {
+  async ({ id, token }, { rejectWithValue }) => {
     try {
-      return GetOrderByIDApi(id, token);
+      const response = await api.get(`orders/${id}`);
+      return response.data;
     } catch (error) {
-      rejectWithValue(error);
-      return error;
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
+    }
+  }
+);
+
+export const createOrder = createAsyncThunk(
+  "order/createOrder",
+  async ({ orderData }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("orders", orderData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response.data.detail,
+        status: error.response.status,
+      });
     }
   }
 );

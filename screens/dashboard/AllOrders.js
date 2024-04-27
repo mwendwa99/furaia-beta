@@ -10,32 +10,20 @@ import {
 import { Card, Text } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../../redux/order/orderActions";
-import { findAcceptedOrder } from "../../utils/helper";
+import { findAcceptedOrder, formatOrderDate } from "../../utils/helper";
 import { IconButton } from "react-native-paper";
 
 const Orders = ({ route, navigation }) => {
-  const receipt = route.params?.receipt;
-  const { orders, loading, error } = useSelector((state) => state.order);
+  const { orders, receipt, billStatus, total, customerPhone } = route.params;
   const { menu } = useSelector((state) => state.menu);
-  const [refreshing, setRefreshing] = useState(loading || false);
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  if (error) {
-    console.log(error);
-  }
-
-  //   console.log(sreceipt);
+  console.log(customerPhone);
 
   useEffect(() => {
     dispatch(getOrders(token));
   }, [dispatch, token]);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    dispatch(getOrders(token));
-    setRefreshing(false);
-  };
 
   const handlePress = () => {
     alert("Order details");
@@ -76,13 +64,21 @@ const Orders = ({ route, navigation }) => {
     if (acceptedOrder === null) {
       alert("No accepted order found");
     } else {
-      navigation.navigate("Total Bill", { item: acceptedOrder });
+      navigation.navigate("Total Bill", {
+        item: acceptedOrder,
+        receipt,
+        billStatus,
+        total,
+        customerPhone,
+      });
     }
   };
 
   const handleCallWaiter = () => {
     alert("The waiter will be with you shortly");
   };
+
+  // console.log(orders);
 
   return (
     <View style={styles.container}>
@@ -118,19 +114,16 @@ const Orders = ({ route, navigation }) => {
             order={item}
             action={handlePress}
             orderNumber={item.order_number}
-            date="2024"
+            date={formatOrderDate(item.order_date)}
             totalAmount={item.total}
             status={item.order_status}
             icon={"silverware-fork-knife"}
             premise={getPremiseName(item.premise_id)}
-            items={item.order_item}
+            items={item.order_items}
             handleOpenReceipt={() => handleOpenReceipt(item)}
           />
         )}
         keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
       />
       <View style={styles.floatingButton}>
         <IconButton

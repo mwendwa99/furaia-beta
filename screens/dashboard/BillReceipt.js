@@ -11,8 +11,9 @@ import { Text, DropdownIOS, Input } from "../../components";
 import { StatusBar } from "expo-status-bar";
 import { getOrderById } from "../../redux/order/orderActions";
 import { useDispatch, useSelector } from "react-redux";
-import { formatOrderDate } from "../../utils/helper";
+import { formatOrderDate, mpesaFormat } from "../../utils/helper";
 import { Divider } from "react-native-paper";
+import { triggerPayment } from "../../redux/bills/billActions";
 
 const dropDownItems = [
   {
@@ -34,17 +35,18 @@ const dropDownItems = [
 ];
 
 export default function BillReceipt({ route, navigation }) {
-  const [modalVisible, setModalVisible] = useState(true);
   const [method, setMethod] = useState(null);
-  const item = route.params?.item;
-  const title = route.params?.title;
+  const { total, item, amountPaid, receipt } = route.params;
   const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth);
-  const { order } = useSelector((state) => state.order);
+  const { user } = useSelector((state) => state.auth);
   const [tipAmount, setTipAmount] = useState("");
 
+  let parsedTotal = parseFloat(total || 0);
+  let parsedAmountPaid = parseFloat(amountPaid || 0);
+  let difference = parsedTotal - parsedAmountPaid;
+
   useEffect(() => {
-    dispatch(getOrderById({ id: 1, token }));
+    dispatch(getOrderById({ id: 1 }));
   }, []);
 
   const handleTipAmount = (value) => {
@@ -62,11 +64,51 @@ export default function BillReceipt({ route, navigation }) {
     return premiseNameMapping[premiseId] || "Unknown Premise";
   };
 
-  //   console.log(typeof item);
+  const handleTriggerPayment = () => {
+    if (!user.mobile) {
+      alert("Customer phone number is required");
+      return;
+    }
 
-  const getPaymentMethodLabel = (paymentId) => {
-    const method = paymentMethods.find((method) => method.id === paymentId);
-    return method ? method.label : "Unknown";
+    const formattedPhone = mpesaFormat(user.mobile);
+
+    if (!receipt) {
+      alert("Bill number is required");
+      return;
+    }
+
+    if (!total) {
+      alert("Total amount is required");
+      return;
+    }
+
+    let totalAmount = parseInt(total);
+    if (isNaN(totalAmount)) {
+      alert("Invalid total amount");
+      return;
+    }
+
+    if (isNaN(total)) {
+      total = parseInt(total) || 0;
+      return total;
+    }
+
+    console.log({
+      bill_number: receipt,
+      total_amount: totalAmount,
+      customer_number: formattedPhone,
+      description: "Waiter triggered payment",
+    });
+
+    // dispatch(
+    //   triggerPayment({
+    //     bill_number: receipt,
+    //     total_amount: totalAmount,
+    //     // customer_number: formattedPhone,
+    //     customer_number: "254768952248",
+    //     description: "Waiter triggered payment",
+    //   })
+    // );
   };
 
   // console.log(tipAmount);
@@ -111,58 +153,65 @@ export default function BillReceipt({ route, navigation }) {
             </View>
             <Divider bold style={{ marginVertical: 10 }} />
             <FlatList
-              nestedScrollEnabled={true}
-              //   style={{ height: 300 }}
-              data={item.order_item}
-              keyExtractor={(item) => item.id.toString()}
+              data={item?.order_items}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <View>
                   <View style={styles.row}>
                     <Text
-                      value={item.item_name}
+                      value={item?.item_name}
                       color="#000"
                       variant="important"
                     />
                     <Text
-                      value={`${item.item_quantity || 1} @ ${item.price}`}
+                      value={`${item?.item_quantity || 1} @ ${
+                        item?.item_price
+                      }`}
                       color="#000"
                       variant="body"
                     />
                     <Text
-                      value={[item].length * item.price}
+                      value={[item].length * item?.item_price}
                       color="#000"
                       variant="body"
-                    />
-                  </View>
-                  <View style={{ ...styles.row, padding: 10 }}>
-                    <FlatList
-                      nestedScrollEnabled={true}
-                      data={item.attributes}
-                      keyExtractor={(item) => item.id.toString()}
-                      renderItem={({ item, index }) => (
-                        <View style={styles.row}>
-                          <Text
-                            value={`${index + 1}. ${item.name}`}
-                            color="#000"
-                            variant="body"
-                          />
-                          <Text
-                            value={`x${item.addon_quantity || 1}`}
-                            color="#000"
-                            variant="body"
-                          />
-                          <Text
-                            value={item.price}
-                            color="#000"
-                            variant="body"
-                          />
-                        </View>
-                      )}
                     />
                   </View>
                 </View>
               )}
             />
+
+            <Divider bold style={{ marginVertical: 10 }} />
+            <View style={{ ...styles.row }}>
+              <Text value={`Extras`} color="#000" variant="important" />
+            </View>
+            <View style={{ ...styles.row, padding: 10 }}>
+              <FlatList
+                data={item.order_addons}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                  <View style={styles.row}>
+                    <Text
+                      value={`${index + 1}. ${item?.addon_name}`}
+                      color="#000"
+                      variant="body"
+                    />
+                    <Text
+                      value={`${item?.addon_quantity || 1}@ ${
+                        item?.addon_price
+                      }`}
+                      color="#000"
+                      variant="body"
+                    />
+                    <Text
+                      value={item?.addon_price}
+                      color="#000"
+                      variant="body"
+                    />
+                  </View>
+                )}
+              />
+            </View>
+
             <Divider bold style={{ marginVertical: 10 }} />
             <View style={{ ...styles.row, marginVertical: 10 }}>
               <Text
@@ -171,7 +220,7 @@ export default function BillReceipt({ route, navigation }) {
                 variant={"important"}
               />
               <Text
-                value={`Kes. ${item.total || "N/A"}`}
+                value={`Kes. ${total || "N/A"}`}
                 color="green"
                 variant={"important"}
               />
@@ -195,7 +244,9 @@ export default function BillReceipt({ route, navigation }) {
                 variant={"important"}
               />
               <Text
-                value={`Kes. ${item.balance || item.total}`}
+                value={`Kes. ${
+                  isNaN(difference) ? "Invalid" : difference.toFixed(2)
+                }`}
                 color="green"
                 variant={"important"}
               />
@@ -230,7 +281,10 @@ export default function BillReceipt({ route, navigation }) {
                   inputStyle={{ marginLeft: 10, height: 30, width: "70%" }}
                 />
               </View>
-              <Pressable style={styles.payButton}>
+              <Pressable
+                style={styles.payButton}
+                onPress={handleTriggerPayment}
+              >
                 <Text
                   value={`Pay Order`}
                   color="darkgreen"

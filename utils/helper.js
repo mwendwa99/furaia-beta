@@ -62,9 +62,13 @@ export function getISODate(date) {
 // finds orders that have been accepted
 export const findAcceptedOrder = (orders) => {
   for (let i = 0; i < orders.length; i++) {
-    if (orders[i].order_status === "accepted") {
+    if (orders[i].order_status === "new") {
       return orders[i];
     }
   }
   return null; // If no accepted order found
 };
+
+export function mpesaFormat(phoneNumber) {
+  return phoneNumber.replace(/^0/, "254");
+}

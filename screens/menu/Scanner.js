@@ -17,13 +17,27 @@ const Scanner = ({ navigation }) => {
   const dispatch = useDispatch();
 
   // console.log(menu);
-
   useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      // do something - for example: reset states, ask for camera permission
+      setScanned(false);
+      setHasPermission(false);
+      (async () => {
+        const { status } = await BarCodeScanner.requestPermissionsAsync();
+        setHasPermission(status === "granted");
+      })();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await BarCodeScanner.requestPermissionsAsync();
+  //     setHasPermission(status === "granted");
+  //   })();
+  // }, []);
 
   useEffect(() => {
     if (autLoading) {
@@ -36,36 +50,6 @@ const Scanner = ({ navigation }) => {
       success("loading", 2000);
     }
   }, []);
-
-  // useEffect(() => {
-  //   const fetchStoreNumber = async () => {
-  //     try {
-  //       const storedStoreNumber = await AsyncStorage.getItem("storeNumber");
-  //       if (storedStoreNumber !== null) {
-  //         setStoreNumber(storedStoreNumber);
-  //       } else {
-  //         setStoreNumber("1"); // Set default value if storeNumber is not available in AsyncStorage
-  //       }
-  //     } catch (error) {
-  //       console.log("Error retrieving storeNumber:", error);
-  //     }
-  //   };
-
-  //   fetchStoreNumber();
-  // }, []);
-
-  // const handleBarCodeScanned = async ({ type, data }) => {
-  //   setScanned(true);
-
-  //   // get premise code from scanned data
-  //   const premiseCode = getPremiseCode(data);
-
-  //   // add premiseCode to AsyncStorage and wait for it to finish
-  //   await AsyncStorage.setItem("storeNumber", premiseCode);
-
-  //   // set storeNumber state to premiseCode after AsyncStorage operation is fulfilled
-  //   setStoreNumber(premiseCode.toString());
-  // };
 
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;

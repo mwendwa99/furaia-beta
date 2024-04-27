@@ -19,6 +19,9 @@ const authSlice = createSlice({
     setExpoPushToken: (state, action) => {
       state.expoPushToken = action.payload;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -29,6 +32,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.roles = action.payload.roles;
+        state.error = null;
         // state.otp = action.payload.otp;
       })
       .addCase("auth/login/rejected", (state, action) => {
@@ -138,6 +142,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setExpoPushToken } = authSlice.actions;
+export const { setExpoPushToken, clearError } = authSlice.actions;
 
 export default authSlice.reducer;

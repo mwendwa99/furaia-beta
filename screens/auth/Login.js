@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { danger, success } from "../../utils/toast";
 import { login, getUser } from "../../redux/auth/authActions";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { clearError } from "../../redux/auth/authReducer";
 
 const Login = ({ navigation }) => {
   const [phone, setPhone] = useState("");
@@ -18,12 +19,22 @@ const Login = ({ navigation }) => {
   // console.log("OTP:", otp);
   // console.log("isVerified:", isVerified);
   // console.log("Token:", token);
-  // console.log("error:", error);
+  console.log("error:", error);
 
   // notify when is loading
   if (loading) {
     success("loading", 2000);
   }
+
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+      danger(error.message, 2000);
+      console.log("error", error.message);
+    }
+
+    dispatch(clearError());
+  }, [error]);
 
   useEffect(() => {
     if (isVerified) {
