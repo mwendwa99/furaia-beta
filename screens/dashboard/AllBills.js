@@ -36,13 +36,14 @@ export default function AllBills({ navigation, route }) {
     setRefreshing(false);
   };
 
-  const handleNavigate = (orders, receipt, billStatus, total) => {
+  const handleNavigate = (orders, receipt, billStatus, total, premise) => {
     navigation.navigate("All Orders", {
       orders,
       receipt,
       billStatus,
       total,
       amountPaid: 0,
+      premise,
     });
   };
 
@@ -74,7 +75,8 @@ export default function AllBills({ navigation, route }) {
                 item?.orders,
                 item?.bill_number,
                 item?.bill_payment_status,
-                item?.total_amount
+                item?.total_amount,
+                item?.premise_name
               )
             }
           />

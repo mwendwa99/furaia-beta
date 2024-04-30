@@ -14,12 +14,13 @@ import { findAcceptedOrder, formatOrderDate } from "../../utils/helper";
 import { IconButton } from "react-native-paper";
 
 const Orders = ({ route, navigation }) => {
-  const { orders, receipt, billStatus, total, customerPhone } = route.params;
+  const { orders, receipt, billStatus, total, customerPhone, premise } =
+    route.params;
   const { menu } = useSelector((state) => state.menu);
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  console.log(customerPhone);
+  // console.log(orders);
 
   useEffect(() => {
     dispatch(getOrders(token));
@@ -65,7 +66,9 @@ const Orders = ({ route, navigation }) => {
       alert("No accepted order found");
     } else {
       navigation.navigate("Total Bill", {
-        item: acceptedOrder,
+        // item: acceptedOrder,
+        premise,
+        item: orders,
         receipt,
         billStatus,
         total,

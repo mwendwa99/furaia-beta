@@ -32,10 +32,12 @@ const dropDownItems = [
 
 export default function BillReceipt({ route, navigation }) {
   const [method, setMethod] = useState(null);
-  const { total, item, amountPaid, receipt } = route.params;
+  const { total, item, amountPaid, receipt, premise } = route.params;
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [tipAmount, setTipAmount] = useState("");
+  let addonIndex = 1;
+  let orderIndex = 1;
 
   let parsedTotal = parseFloat(total || 0);
   let parsedAmountPaid = parseFloat(amountPaid || 0);
@@ -106,18 +108,18 @@ export default function BillReceipt({ route, navigation }) {
       description: "Waiter triggered payment",
     });
 
-    // dispatch(
-    //   triggerPayment({
-    //     bill_number: receipt,
-    //     total_amount: totalAmount,
-    //     // customer_number: formattedPhone,
-    //     customer_number: "254768952248",
-    //     description: "Waiter triggered payment",
-    //   })
-    // );
+    dispatch(
+      triggerPayment({
+        bill_number: receipt,
+        total_amount: totalAmount,
+        customer_number: formattedPhone,
+        // customer_number: "254768952248",
+        description: "Waiter triggered payment",
+      })
+    );
   };
 
-  // console.log(tipAmount);
+  console.log({ item });
   return (
     <ScrollView style={styles.container}>
       <View style={styles.item}>
@@ -125,7 +127,7 @@ export default function BillReceipt({ route, navigation }) {
           <View>
             <View style={styles.header}>
               <Text
-                value={getPremiseName(item.premise_id)}
+                value={`${premise || "No Premise"}`}
                 color="#000"
                 variant="heading"
               />
@@ -135,7 +137,7 @@ export default function BillReceipt({ route, navigation }) {
                 variant="important"
               />
               <Text
-                value={`Bill No. #${item.order_number || "N/A"}`}
+                value={`Bill No. #${receipt || "N/A"}`}
                 color="#000"
                 variant="important"
               />
@@ -159,29 +161,34 @@ export default function BillReceipt({ route, navigation }) {
             </View>
             <Divider bold style={{ marginVertical: 10 }} />
             <FlatList
-              data={item?.order_items}
-              keyExtractor={(item, index) => index.toString()}
+              data={item}
+              keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <View>
-                  <View style={styles.row}>
-                    <Text
-                      value={item?.item_name}
-                      color="#000"
-                      variant="important"
-                    />
-                    <Text
-                      value={`${item?.item_quantity || 1} @ ${
-                        item?.item_price
-                      }`}
-                      color="#000"
-                      variant="body"
-                    />
-                    <Text
-                      value={[item].length * item?.item_price}
-                      color="#000"
-                      variant="body"
-                    />
-                  </View>
+                  {item.order_items.map((orderItem, index) => (
+                    <View key={orderIndex++} style={styles.row}>
+                      <Text
+                        value={`${orderIndex}. ${orderItem.item_name}`}
+                        color="#000"
+                        variant="important"
+                      />
+                      <Text
+                        value={`${orderItem.item_quantity || 1} @ ${
+                          orderItem.item_price
+                        }`}
+                        color="#000"
+                        variant="body"
+                      />
+                      <Text
+                        value={
+                          parseFloat(orderItem.item_quantity || 1) *
+                          parseFloat(orderItem.item_price)
+                        }
+                        color="#000"
+                        variant="body"
+                      />
+                    </View>
+                  ))}
                 </View>
               )}
             />
@@ -192,27 +199,34 @@ export default function BillReceipt({ route, navigation }) {
             </View>
             <View style={{ ...styles.row, padding: 10 }}>
               <FlatList
-                data={item.order_addons}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                  <View style={styles.row}>
-                    <Text
-                      value={`${index + 1}. ${item?.addon_name}`}
-                      color="#000"
-                      variant="body"
-                    />
-                    <Text
-                      value={`${item?.addon_quantity || 1}@ ${
-                        item?.addon_price
-                      }`}
-                      color="#000"
-                      variant="body"
-                    />
-                    <Text
-                      value={item?.addon_price}
-                      color="#000"
-                      variant="body"
-                    />
+                data={item}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View>
+                    {item.order_addons.map((addon) => (
+                      <View key={addonIndex++} style={styles.row}>
+                        <Text
+                          value={`${addonIndex}. ${addon?.addon_name}`}
+                          color="#000"
+                          variant="body"
+                        />
+                        <Text
+                          value={`${addon.addon_quantity || 1} @ ${
+                            addon.addon_price
+                          }`}
+                          color="#000"
+                          variant="body"
+                        />
+                        <Text
+                          value={
+                            parseFloat(addon.addon_quantity || 1) *
+                            parseFloat(addon.addon_price)
+                          }
+                          color="#000"
+                          variant="body"
+                        />
+                      </View>
+                    ))}
                   </View>
                 )}
               />
@@ -273,7 +287,7 @@ export default function BillReceipt({ route, navigation }) {
               />
             </View>
             <View style={{ ...styles.column, marginVertical: 10 }}>
-              <View style={styles.row}>
+              {/* <View style={styles.row}>
                 <Text
                   value={`Tip amount`}
                   color="green"
@@ -286,7 +300,7 @@ export default function BillReceipt({ route, navigation }) {
                   onChange={handleTipAmount}
                   inputStyle={{ marginLeft: 10, height: 30, width: "70%" }}
                 />
-              </View>
+              </View> */}
               <Pressable
                 style={styles.payButton}
                 onPress={handleTriggerPayment}
