@@ -28,7 +28,7 @@ export default function AllBills({ navigation, route }) {
 
   useEffect(() => {
     dispatch(getAllBills({ outletId: user?.outlet_id, status }));
-  }, [dispatch]);
+  }, [allBills, dispatch]);
 
   const onRefresh = async () => {
     setRefreshing(true);
