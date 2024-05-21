@@ -45,7 +45,7 @@ export default function MyReservations() {
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text
-                  value={`${item.premise.premise_name}`}
+                  value={`${item.premise["premise_name"]}`}
                   color={"#002a0c"}
                   variant="important"
                 />

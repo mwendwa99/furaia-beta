@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
-// import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
-import { DropdownIOS, Text, Input, ListItem } from "../../components";
+import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
 import { getISODate } from "../../utils/helper";
 import { Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { createReservation } from "../../redux/reservation/reservationActions";
 import { clearError } from "../../redux/reservation/reservationReducer";
+import { danger, success, warning } from "../../utils/toast";
 
 const premises = [
   {
@@ -39,6 +39,8 @@ const Reservation = ({ navigation }) => {
   //   }
   // }, [reservation, error, loading]);
 
+  // console.log(token);
+
   useEffect(() => {
     if ((error && !loading) || reservation?.errorMessage) {
       // Check if the error message contains the date format error
@@ -47,8 +49,8 @@ const Reservation = ({ navigation }) => {
     dispatch(clearError());
   }, [error, loading]);
 
-  console.log("ERROR:", error);
-  console.log("RESERVATION:", reservation);
+  // console.log("ERROR:", error);
+  // console.log("RESERVATION:", reservation);
 
   const handleDescriptionChange = (value) => {
     setDescription(value);
@@ -68,6 +70,12 @@ const Reservation = ({ navigation }) => {
     };
     // console.log("DATA:", data);
     dispatch(createReservation({ data }));
+
+    //after three seconds alert user then navigate to my reservations
+    setTimeout(() => {
+      success("Reservation created successfully", 3000);
+      navigation.navigate("My Reservations");
+    }, 3000);
   };
 
   return (
@@ -105,7 +113,7 @@ const Reservation = ({ navigation }) => {
         </View>
         <View style={styles.column}>
           <Text value="Select a date" variant="important" color="#002a0c" />
-          {/* <Calendar selectDate={setDate} /> */}
+          <Calendar selectDate={setDate} />
         </View>
         <View style={styles.column}>
           <Text value="Description" variant="important" color="#002a0c" />

@@ -5,6 +5,10 @@ const instance = axios.create({
   baseURL: "https://sapient.stackthon.com/api/",
 });
 
+export const unprotectedApi = axios.create({
+  baseURL: "https://sapient.stackthon.com/api/",
+});
+
 // Add a request interceptor
 instance.interceptors.request.use(
   async (config) => {
@@ -51,7 +55,7 @@ instance.interceptors.response.use(
         // return Promise.reject(error);
         // const refreshResponse = await instance.get("/refresh");
         const refreshResponse = await axios.get(
-          "https://sapient.stackthon.com/api//refresh"
+          "https://sapient.stackthon.com/api/refresh"
         );
         const newAccessToken = refreshResponse.data.token;
         await AsyncStorage.setItem("accessToken", newAccessToken);
