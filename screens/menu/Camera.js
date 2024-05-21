@@ -1,67 +1,75 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, Image } from "react-native";
-import { Camera } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useState, useEffect } from "react";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  getPremiseId,
+  getPremiseTable,
+} from "../../redux/premise/premiseActions";
 import { useDispatch, useSelector } from "react-redux";
+import { getMenu } from "../../redux/menu/menuActions";
 
-export default function CameraComponent({ navigation }) {
-  const [cameraPermission, setCameraPermission] = useState(null);
-  const [camera, setCamera] = useState(null);
-  const [imageUri, setImageUri] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const { token, loading: autLoading } = useSelector((state) => state.auth);
-  const { menu, loading: menuLoading } = useSelector((state) => state.menu);
+export default function Scanner({ navigation }) {
+  const [permission, requestPermission] = useCameraPermissions();
+
+  const [displayText, setDisplayText] = useState("");
   const dispatch = useDispatch();
+  const { premiseId, tableNumber } = useSelector((state) => state.premise);
+  const { token } = useSelector((state) => state.auth);
+  const { menu } = useSelector((state) => state.menu);
 
-  const permisionFunction = async () => {
-    // here is how you can get the camera permission
-    const cameraPermission = await Camera.requestPermissionsAsync();
-
-    setCameraPermission(cameraPermission.status === "granted");
-
-    if (
-      imagePermission.status !== "granted" &&
-      cameraPermission.status !== "granted"
-    ) {
-      alert("Permission for media access needed.");
-    }
-  };
+  // console.log("toto", premiseId, tableNumber);
 
   useEffect(() => {
-    permisionFunction();
-  }, []);
-
-  const takePicture = async () => {
-    if (camera) {
-      const data = await camera.takePictureAsync(null);
-      console.log(data.uri);
-      setImageUri(data.uri);
+    if (displayText) {
+      dispatch(getPremiseId(displayText));
+      dispatch(getPremiseTable(displayText));
     }
-  };
+  }, [displayText, dispatch]);
 
-  const handleNavigate = () => {
-    let storeNumber = 1;
-    // navigation.navigate("Menu");
-    dispatch(getMenu({ storeNumber, token }));
-
-    if (menu) {
-      // console.log("menu", menu);
+  useEffect(() => {
+    if (menu === null && premiseId && token) {
+      dispatch(getMenu({ storeNumber: premiseId, token }));
+    } else if (menu) {
       navigation.navigate("Menu");
+    } else {
+      console.log("menu not found");
     }
+  }, [menu, premiseId, token, dispatch, navigation]);
+
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  const handleBarCodeScanned = (data) => {
+    const result = JSON.stringify(data);
+    // console.log("ZAZA", result);
+    dispatch(getPremiseId(result));
+    dispatch(getPremiseTable(result));
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.cameraContainer}>
-        <Camera
-          ref={(ref) => setCamera(ref)}
-          style={styles.fixedRatio}
-          type={type}
-          ratio={"1:1"}
-        />
-      </View>
-
-      <Button title={"Scan"} onPress={handleNavigate} />
-      {imageUri && <Image source={{ uri: imageUri }} style={{ flex: 1 }} />}
+      <CameraView
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        onBarcodeScanned={({ data }) => handleBarCodeScanned(data)}
+        style={styles.camera}
+        facing={"back"}
+      ></CameraView>
     </View>
   );
 }
@@ -69,19 +77,25 @@ export default function CameraComponent({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
   },
-  cameraContainer: {
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
     flex: 1,
     flexDirection: "row",
-  },
-  fixedRatio: {
-    flex: 1,
-    aspectRatio: 1,
+    backgroundColor: "transparent",
+    margin: 64,
   },
   button: {
-    flex: 0.1,
-    padding: 10,
+    flex: 1,
     alignSelf: "flex-end",
     alignItems: "center",
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
   },
 });

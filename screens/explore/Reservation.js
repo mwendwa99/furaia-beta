@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
-import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
+// import { Calendar, DropdownIOS, Text, Input, ListItem } from "../../components";
+import { DropdownIOS, Text, Input, ListItem } from "../../components";
 import { getISODate } from "../../utils/helper";
 import { Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
@@ -104,7 +105,7 @@ const Reservation = ({ navigation }) => {
         </View>
         <View style={styles.column}>
           <Text value="Select a date" variant="important" color="#002a0c" />
-          <Calendar selectDate={setDate} />
+          {/* <Calendar selectDate={setDate} /> */}
         </View>
         <View style={styles.column}>
           <Text value="Description" variant="important" color="#002a0c" />

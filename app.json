@@ -35,7 +35,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Furaia to access your camera."
+          "cameraPermission": "Allow $(furaia-beta) to access your camera."
         }
       ]
     ],

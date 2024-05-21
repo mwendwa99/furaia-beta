@@ -14,8 +14,8 @@ export const ScannerNavigator = () => {
     <Stack.Navigator initialRouteName="Scan">
       <Stack.Screen
         name="Scan"
-        component={ExpoScanner}
-        // component={Camera}
+        // component={ExpoScanner}
+        component={Camera}
         options={{ headerShown: false }}
       />
       <Stack.Screen

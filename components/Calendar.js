@@ -9,12 +9,12 @@ export default function Calendar({ selectDate }) {
 
   return (
     <View style={styles.container}>
-      <CalendarPicker
+      {/* <CalendarPicker
         onDateChange={onDateChange}
         selectedDayStyle={{
           backgroundColor: "#AFE1AF",
         }}
-      />
+      /> */}
     </View>
   );
 }
